@@ -1,15 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <feed xmlns="http://www.w3.org/2005/Atom">
-  <title>Hexo</title>
-  
+  <title>谢汉杰</title>
+  <subtitle>保持愚蠢，保持饥饿</subtitle>
   <link href="/atom.xml" rel="self"/>
   
-  <link href="http://yoursite.com/"/>
+  <link href="http://jack921.win/"/>
   <updated>2017-04-25T16:47:07.115Z</updated>
-  <id>http://yoursite.com/</id>
+  <id>http://jack921.win/</id>
   
   <author>
-    <name>John Doe</name>
+    <name>jack</name>
     
   </author>
   
@@ -17,8 +17,8 @@
   
   <entry>
     <title>Hello World</title>
-    <link href="http://yoursite.com/2017/04/26/hello-world/"/>
-    <id>http://yoursite.com/2017/04/26/hello-world/</id>
+    <link href="http://jack921.win/2017/04/26/hello-world/"/>
+    <id>http://jack921.win/2017/04/26/hello-world/</id>
     <published>2017-04-25T16:47:07.115Z</published>
     <updated>2017-04-25T16:47:07.115Z</updated>
     
