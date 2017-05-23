@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://jack921.win/"/>
-  <updated>2017-05-16T16:22:40.134Z</updated>
+  <updated>2017-05-23T14:08:40.241Z</updated>
   <id>http://jack921.win/</id>
   
   <author>
@@ -14,6 +14,132 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>淘宝开源库VLayout实践</title>
+    <link href="http://jack921.win/2017/05/23/%E6%B7%98%E5%AE%9D%E5%BC%80%E6%BA%90%E5%BA%93VLayout%E5%AE%9E%E8%B7%B5/"/>
+    <id>http://jack921.win/2017/05/23/淘宝开源库VLayout实践/</id>
+    <published>2017-05-23T14:05:46.000Z</published>
+    <updated>2017-05-23T14:08:40.241Z</updated>
+    
+    <content type="html"><![CDATA[<p>最近淘宝出了vlayout,刚开始看淘宝的文档的时候还是有点懵，后来自己也总结规划了一下，写了一个比较好看的demo，顺便在这里总结一下。</p>
+<p>VLayout是什么，说白了就是用一个原生RecycelerView加上VLayout来实现在一个页面上比较复杂的布局并且有一个比较好的复用，在RecyclerView里同时有GridLayout布局，瀑布流布局，浮动布局等VLayout提供的九大布局，这也是淘宝客户端首页加载不同布局的方法。</p>
+<p>好了，简单介绍到这里，首先我们先导入VLayout:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">compile (&apos;com.alibaba.android:vlayout:版本@aar&apos;) &#123;</div><div class="line">	transitive = true</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>具体的版本请看github里VLayout给出的版本号。现在最新是1.0.6<br>接着我们就可以开始引用VLayout了,VLayout的通用代码如下:<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">VirtualLayoutManager manager = new VirtualLayoutManager(this);</div><div class="line">recyclerview.setLayoutManager(manager);</div><div class="line">DelegateAdapter adapter =new DelegateAdapter(manager, true);</div></pre></td></tr></table></figure></p>
+<ul>
+<li>其中VirtualLayoutManager它继承自LinearLayoutManager；引入了 LayoutHelper 的概念，它负责具体的布局逻辑；VirtualLayoutManager管理了一系列LayoutHelper，将具体的布局能力交给LayoutHelper来完成。</li>
+<li>DelegateAdapter是VLayout专门为LayoutHelper定制的Adapter，我们把装载有各种布局的LayoutHelper的Adapter放进DelegateAdapter里最后在RecyclerView.setAdapter(DelegateAdapter);就可以加载出复杂的布局。</li>
+<li>或许你们会问什么是LayoutHelper，这个问题问得好，就是VLayout提供的九种默认通用布局，解耦所有的View和布局之间的关系: Linear, Grid, 吸顶, 浮动, 固定位置等具体,名称和功能如下:</li>
+</ul>
+<ol>
+<li>LinearLayoutHelper: 线性布局</li>
+<li>GridLayoutHelper: Grid布局， 支持横向的colspan</li>
+<li>StaggeredGridLayoutHelper: 瀑布流布局，可配置间隔高度/宽度</li>
+<li>FixLayoutHelper: 固定布局，始终在屏幕固定位置显示</li>
+<li>ScrollFixLayoutHelper: 固定布局，但之后当页面滑动到该图片区域才显示, 可以用来做返回顶部或其他书签等</li>
+<li>FloatLayoutHelper: 浮动布局，可以固定显示在屏幕上，但用户可以拖拽其位置</li>
+<li>ColumnLayoutHelper: 栏格布局，都布局在一排，可以配置不同列之间的宽度比值</li>
+<li>SingleLayoutHelper: 通栏布局，只会显示一个组件View</li>
+<li>OnePlusNLayoutHelper: 一拖N布局，可以配置1-5个子元素</li>
+<li>StickyLayoutHelper: stikcy布局， 可以配置吸顶或者吸底</li>
+</ol>
+<p>这就是九种布局对应的类，我们可以用着九个类实现各种复杂的布局，下面我会一一介绍每个布局和效果，以便更直观的看到效果:</p>
+<ul>
+<li>LinearLayoutHelper: 线性布局，就是实现ListView的效果很简单，直接看代码:</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">public class LinearLayoutHelperActivity extends Activity&#123;</div><div class="line">    public static RecyclerView recyclerview;</div><div class="line">    public static DelegateRecyclerAdapter delegateRecyclerAdapter;</div><div class="line">    public DelegateAdapter adapter;</div><div class="line">    @Override</div><div class="line">    protected void onCreate(@Nullable Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.layout_main);</div><div class="line">        recyclerview=(RecyclerView)findViewById(R.id.recyclerview);</div><div class="line">        VirtualLayoutManager manager = new VirtualLayoutManager(this);</div><div class="line">        recyclerview.setLayoutManager(manager);</div><div class="line">        adapter =new DelegateAdapter(manager, true);</div><div class="line"></div><div class="line">        adapter.addAdapter(init(this));</div><div class="line">        recyclerview.setAdapter(adapter);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static DelegateRecyclerAdapter init(Context context)&#123;</div><div class="line">        LinearLayoutHelper linearLayoutHelper=new LinearLayoutHelper();</div><div class="line">        //设置间隔高度</div><div class="line">        linearLayoutHelper.setDividerHeight(5);</div><div class="line">        //设置布局底部与下个布局的间隔</div><div class="line">        linearLayoutHelper.setMarginBottom(20);</div><div class="line">        //设置间距</div><div class="line">        linearLayoutHelper.setMargin(20,20,20,20);</div><div class="line">        delegateRecyclerAdapter=new DelegateRecyclerAdapter(context,linearLayoutHelper,&quot;LinearLayoutHelper&quot;);</div><div class="line">        return delegateRecyclerAdapter;</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>而DelegateRecyclerAdapter的代码如下:</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div></pre></td><td class="code"><pre><div class="line">public class DelegateRecyclerAdapter extends DelegateAdapter.Adapter&#123;</div><div class="line">    public Context context;</div><div class="line">    private LayoutHelper helper;</div><div class="line">    private LayoutInflater inflater;</div><div class="line">    private String name;</div><div class="line"></div><div class="line">    public DelegateRecyclerAdapter(Context context,LayoutHelper helper,String name)&#123;</div><div class="line">        this.inflater = LayoutInflater.from(context);</div><div class="line">        this.helper = helper;</div><div class="line">        this.context=context;</div><div class="line">        this.name=name;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public LayoutHelper onCreateLayoutHelper() &#123;</div><div class="line">        return this.helper;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public RecyclerView.ViewHolder onCreateViewHolder(ViewGroup parent, int viewType) &#123;</div><div class="line">        return new MyViewHolder(inflater.inflate(R.layout.layout_item,parent,false));</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public void onBindViewHolder(RecyclerView.ViewHolder holder, int position) &#123;</div><div class="line">            if(position%2==0)&#123;</div><div class="line">                holder.itemView.setBackgroundColor(0xaa3F51B5);</div><div class="line">            &#125;else&#123;</div><div class="line">                holder.itemView.setBackgroundColor(0xccFF4081);</div><div class="line">            &#125;</div><div class="line">        MyViewHolder myViewHolder=(MyViewHolder)holder;</div><div class="line">        myViewHolder.name.setText(name+position+&quot;&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    @Override</div><div class="line">    public int getItemCount() &#123;</div><div class="line">        return 9;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public class MyViewHolder extends RecyclerView.ViewHolder&#123;</div><div class="line">        public TextView name;</div><div class="line">        public MyViewHolder(View itemView) &#123;</div><div class="line">            super(itemView);</div><div class="line">            name=(TextView)itemView.findViewById(R.id.item_name);</div><div class="line">        &#125;</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>这里需要说的就是在Adapter类里我们需要继承Vlayout的DelegateAdapter.Adapter类，然后多回调onCreateLayoutHelper()方法，返回我们传进去的LayoutHelper类，其他的和普通的RecyclerView是一个样的。DelegateRecyclerAdapter在我们后面也有多次引用。其他要说的就是我们初始完LinearLayoutHelper后生产DelegateAdapter.Adapter类再赋给DelegateAdapter，然后然后RecyclerView在setAdapter()就这样。<br><img src="http://upload-images.jianshu.io/upload_images/925576-f49efd0bc8ef6598.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<ul>
+<li>GridLayoutHelper: Grid布局， 支持横向的colspan，也很简单，代码如下:</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">public static DelegateRecyclerAdapter init(Context context)&#123;</div><div class="line">        GridLayoutHelper gridLayoutHelper=new GridLayoutHelper(4);</div><div class="line">        //自定义设置某些位置的Item的占格数</div><div class="line">        gridLayoutHelper.setSpanSizeLookup(new GridLayoutHelper.SpanSizeLookup() &#123;</div><div class="line">            @Override</div><div class="line">            public int getSpanSize(int position) &#123;</div><div class="line">                if (position &gt;5) &#123;</div><div class="line">                    return 2;</div><div class="line">                &#125;else &#123;</div><div class="line">                    return 1;</div><div class="line">                &#125;</div><div class="line">            &#125;</div><div class="line">        &#125;);</div><div class="line">        //是否填满可用区域</div><div class="line">        gridLayoutHelper.setAutoExpand(false);</div><div class="line">        delegateRecyclerAdapter=new DelegateRecyclerAdapter(context,gridLayoutHelper,&quot;GridLayoutHelper&quot;);</div><div class="line">        return delegateRecyclerAdapter;</div><div class="line">    &#125;</div></pre></td></tr></table></figure>
+<p>其他代码很上面的一样。<br><img src="http://upload-images.jianshu.io/upload_images/925576-b249b0f828e85a4a.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="img2.PNG"></p>
+<ul>
+<li>StaggeredGridLayoutHelper: 瀑布流布局，可配置间隔高度/宽度,代码如下:</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public static StaggeredAdapter init(Context context)&#123;</div><div class="line">   StaggeredGridLayoutHelper staggeredGridLayoutHelper=new StaggeredGridLayoutHelper(3,20);</div><div class="line">   staggeredAdapter=new StaggeredAdapter(context,staggeredGridLayoutHelper,&quot;StaggeredGridLayoutHelper&quot;);</div><div class="line">   return staggeredAdapter;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>在StaggeredAdapter里我们在onBindViewHolder里用<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">ViewGroup.LayoutParams layoutParams = ((MyViewholder) holder).text.getLayoutParams();</div><div class="line">layoutParams.height = 260 + position % 7 * 20;</div><div class="line">((MyViewholder) holder).text.setLayoutParams(layoutParams);</div></pre></td></tr></table></figure></p>
+<p>来实现高度不一致，效果如下:<br><img src="http://upload-images.jianshu.io/upload_images/925576-4f28984953b9a0a5.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="img3.PNG"></p>
+<ul>
+<li>FixLayoutHelper: 固定布局，始终在屏幕固定位置显示,代码如下：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">public static FixLayoutAdapter initFixLayoutHelper(Context context)&#123;</div><div class="line">    FixLayoutHelper fixLayoutHelper=new FixLayoutHelper(FixLayoutHelper.BOTTOM_LEFT, 200, 200);</div><div class="line">    FixLayoutAdapter fixLayoutAdapter=new FixLayoutAdapter(context,fixLayoutHelper,&quot;fixlayouthelp&quot;);</div><div class="line">    return fixLayoutAdapter;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>除了有FixLayoutHelper.BOTTOM_LEFT之外，还有FixLayoutHelper.TOP_LEFT，FixLayoutHelper.BOTTOM_RIGHT，FixLayoutHelper.TOP_RIGHT, 200,200分别对应偏移量x,y，效果如下:<br><img src="http://upload-images.jianshu.io/upload_images/925576-cb8265841bbfe5e5.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="img4.PNG"><br>fixlayouthelp区域块就是FixLayoutHelper了。</p>
+<ul>
+<li>ScrollFixLayoutHelper: 固定布局，但之后当页面滑动到该图片区域才显示, 可以用来做返回顶部或其他书签等，代码如下:</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public static FixLayoutAdapter initScrollFixLayout(Context context)&#123;</div><div class="line">    ScrollFixLayoutHelper scrollFixLayoutHelper = new ScrollFixLayoutHelper(15,15);</div><div class="line">    //show_always:总是显示</div><div class="line">    //show_on_enter:当页面滚动到这个视图的位置的时候，才显示</div><div class="line">    //show_on_leave:当页面滚出这个视图的位置的时候显示</div><div class="line">    scrollFixLayoutHelper.setShowType(ScrollFixLayoutHelper.SHOW_ON_ENTER);</div><div class="line">    return new FixLayoutAdapter(context, scrollFixLayoutHelper,&quot;scrollfixlayouthelper&quot;);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>代码很简单，看效果：<br><img src="http://upload-images.jianshu.io/upload_images/925576-21ed8eff046b70e6.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="img5.PNG"><br>ScrollFixLayoutHelper继承自FixLayoutHelper，不同的是showType来决定这个布局的Item是否显示，可以用来做一些返回顶部之类的按钮，</p>
+<ol>
+<li>SHOW_ALWAYS：与FixLayoutHelper的行为一致，固定在某个位置； </li>
+<li>SHOW_ON_ENTER：默认不显示视图，当页面滚动到这个视图的位置的时候，才显示； </li>
+<li>SHOW_ON_LEAVE：默认不显示视图，当页面滚出这个视图的位置的时候显示；</li>
+</ol>
+<p>这里效果不明显，等集合所有布局之后大家就可以看很直观的效果</p>
+<ul>
+<li>FloatLayoutHelper: 浮动布局，可以固定显示在屏幕上，但用户可以拖拽其位置，代码如下：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">public static FixLayoutAdapter initFloatLayoutHelper(Context context)&#123;</div><div class="line">    FloatLayoutHelper floatLayoutHelper=new FloatLayoutHelper();</div><div class="line">    floatLayoutHelper.setDefaultLocation(20,250);</div><div class="line">    FixLayoutAdapter fixLayoutAdapter=new FixLayoutAdapter(context,floatLayoutHelper,&quot;floatlayouthelper&quot;);</div><div class="line">    return  fixLayoutAdapter;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>效果如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-d3c37f8602d1b4eb.gif?imageMogr2/auto-orient/strip" alt="img6.gif"></p>
+<p>其中setDefaultLocation()使用来设置他的初始位置的，setAlignType（表示吸边时的基准位置，默认左上角，有四个取值，分别是TOP_LEFT, TOP_RIGHT, BOTTOM_LEFT, BOTTOM_RIGHT）</p>
+<ul>
+<li>ColumnLayoutHelper: 栏格布局，都布局在一排，可以配置不同列之间的宽度比值，代码如下:</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"> public static ColumnLayoutAdapter initColumnLayout(Context context)&#123;</div><div class="line">    ColumnLayoutHelper columnLayoutHelper=new ColumnLayoutHelper();</div><div class="line">    columnLayoutHelper.setWeights(new float[]&#123;20,20,20,20,20&#125;);</div><div class="line">    columnLayoutHelper.setMarginBottom(20);</div><div class="line">    ColumnLayoutAdapter columnLayoutAdapter=new ColumnLayoutAdapter(context,columnLayoutHelper,&quot;ColumnLayoutHelper&quot;);</div><div class="line">    return columnLayoutAdapter;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>ColumnLayoutHelper需要设置Weights，是一个float数组，总和为100，否则超出布局。效果图如下：<br><img src="http://upload-images.jianshu.io/upload_images/925576-7a749e29d9653da2.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="img7.PNG"></p>
+<ul>
+<li>SingleLayoutHelper: 通栏布局，只会显示一个组件View，这里建议设置Adapter个数为1，因为他就只会显示一栏，假如有多个可能会出现一些问题，本人实测个数多时会出点问题。代码如下：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line">public static SingleLayoutAdapter initSingleLayout(Context context)&#123;</div><div class="line">    SingleLayoutHelper singleLayoutHelper=new SingleLayoutHelper();</div><div class="line">    //设置间距</div><div class="line">    singleLayoutHelper.setMargin(20,20,20,20);</div><div class="line">    SingleLayoutAdapter singleLayoutAdapter=new SingleLayoutAdapter(context,singleLayoutHelper,&quot;SingleLayoutHelper&quot;);</div><div class="line">    return singleLayoutAdapter;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>效果图如下:</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-c0c41a40cc9c215d.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="img8.PNG"></p>
+<ul>
+<li>OnePlusNLayoutHelper: 一拖N布局，可以配置1-5个子元素,根据个数的不同所呈现的界面也是不一样的,不同个数效果如下：</li>
+</ul>
+<p>//个数为1</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-a4c577ec374e57cd.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="个数为1.PNG"></p>
+<p>//个数为2</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-d874d7b8fa5d9971.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="个数为2.PNG"></p>
+<p>//个数为3</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-9f228d43a65eeae7.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="个数为3.PNG"></p>
+<p>//个数为4</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-74dc8792c026cb34.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="个数为4.PNG"></p>
+<p>//个数为5</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-29d47f791ba380b6.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="个数为5.PNG"></p>
+<p>代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div></pre></td><td class="code"><pre><div class="line"> public static OnePlusNLayoutAdapter initOnePlusNLayout(Context context)&#123;</div><div class="line">    OnePlusNLayoutHelper onePlusNLayoutHelper=new OnePlusNLayoutHelper();</div><div class="line">    //设置布局底部与下个布局的间隔</div><div class="line">    onePlusNLayoutHelper.setMarginBottom(20);</div><div class="line">    OnePlusNLayoutAdapter onePlusNLayoutAdapter=new OnePlusNLayoutAdapter(context,onePlusNLayoutHelper,&quot;OnePlusNLayoutHelper&quot;);</div><div class="line">    return onePlusNLayoutAdapter;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<ul>
+<li>StickyLayoutHelper: stikcy布局， 可以配置吸顶或者吸底，代码如下:</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div></pre></td><td class="code"><pre><div class="line">public static StickyLayoutAdapter initStickyLayoutHelper(Context context)&#123;</div><div class="line">    StickyLayoutHelper stickyLayoutHelper=new StickyLayoutHelper();</div><div class="line">    return new StickyLayoutAdapter(context,stickyLayoutHelper);</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>效果图如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-7511442ba426d5a1.gif?imageMogr2/auto-orient/strip" alt="img10.gif"></p>
+<ul>
+<li>最后假如只是单单加载其中的一个布局其实意义不大，VLayout只最大的意义在于加载多个布局并且保持一个很好的复用，所以我们把上面的所有布局一起加载起来，代码如下：</li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div></pre></td><td class="code"><pre><div class="line">public class AllActivity extends Activity&#123;</div><div class="line"></div><div class="line">    private RecyclerView recyclerview;</div><div class="line">    private DelegateAdapter delegateAdapter ;</div><div class="line">    final List&lt;DelegateAdapter.Adapter&gt; adapters = new LinkedList&lt;&gt;();</div><div class="line"></div><div class="line">    @Override</div><div class="line">    protected void onCreate(@Nullable Bundle savedInstanceState) &#123;</div><div class="line">        super.onCreate(savedInstanceState);</div><div class="line">        setContentView(R.layout.layout_main);</div><div class="line">        recyclerview=(RecyclerView)findViewById(R.id.recyclerview);</div><div class="line"></div><div class="line">        initView();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public void initView()&#123;</div><div class="line">        RecyclerView.RecycledViewPool viewPool = new RecyclerView.RecycledViewPool();</div><div class="line">        recyclerview.setRecycledViewPool(viewPool);</div><div class="line">        viewPool.setMaxRecycledViews(0,10);</div><div class="line"></div><div class="line">        adapters.add(LinearLayoutHelperActivity.init(this));</div><div class="line">        adapters.add(ColumnLayoutHelperActivity.initColumnLayout(this));</div><div class="line">        adapters.add(GridLayoutHelperActivity.init(this));</div><div class="line">        adapters.add(FixLayoutHelperActivity.initFixLayoutHelper(this));</div><div class="line">        adapters.add(ScrollFixLayoutHelperActivity.initScrollFixLayout(this));</div><div class="line">        adapters.add(SingleLayoutHelperActivity.initSingleLayout(this));</div><div class="line">        adapters.add(OnePlusNLayoutHelperActivity.initOnePlusNLayout(this));</div><div class="line">        adapters.add(FloatLayoutHelperActivity.initFloatLayoutHelper(this));</div><div class="line">        adapters.add(StickyLayoutHelperActivity.initStickyLayoutHelper(this));</div><div class="line">        adapters.add(StaggeredGridLayoutHelperActivity.init(this));</div><div class="line"></div><div class="line">        VirtualLayoutManager manager = new VirtualLayoutManager(this);</div><div class="line">        recyclerview.setLayoutManager(manager);</div><div class="line">        delegateAdapter = new DelegateAdapter(manager);</div><div class="line"></div><div class="line">        delegateAdapter.setAdapters(adapters);</div><div class="line">        recyclerview.setAdapter(delegateAdapter);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>要注意的是DelegateAdapter delegateAdapter = new DelegateAdapter(layoutManager, hasConsistItemType);里当hasConsistItemType=true的时候，不论是不是属于同一个子adapter，相同类型的item都能复用。表示它们共享一个类型。 当hasConsistItemType=false的时候，不同子adapter之间的类型不共享。</p>
+<p>效果如下图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-56a30a38b9907e92.gif?imageMogr2/auto-orient/strip" alt="img11.gif"></p>
+<p>最后源码demo,代码都在这<a href="https://github.com/jack921/ProjectVLayout" target="_blank" rel="external">https://github.com/jack921/ProjectVLayout</a></p>
+]]></content>
+    
+    <summary type="html">
+    
+      最近淘宝出了vlayout,刚开始看淘宝的文档的时候还是有点懵，后来自己也总结规划了一下，写了一个比较好看的demo，顺便在这里总结一下。
+    
+    </summary>
+    
+      <category term="Android" scheme="http://jack921.win/categories/Android/"/>
+    
+    
+      <category term="android" scheme="http://jack921.win/tags/android/"/>
+    
+  </entry>
   
   <entry>
     <title>高仿京东金融的数值滚动尺</title>
