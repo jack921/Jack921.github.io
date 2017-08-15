@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://jack921.win/"/>
-  <updated>2017-07-26T16:42:25.716Z</updated>
+  <updated>2017-08-15T16:24:43.420Z</updated>
   <id>http://jack921.win/</id>
   
   <author>
@@ -14,6 +14,91 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>Java基础之对象及其内存管理</title>
+    <link href="http://jack921.win/2017/08/16/Java%E5%9F%BA%E7%A1%80%E4%B9%8B%E5%AF%B9%E8%B1%A1%E5%8F%8A%E5%85%B6%E5%86%85%E5%AD%98%E7%AE%A1%E7%90%86/"/>
+    <id>http://jack921.win/2017/08/16/Java基础之对象及其内存管理/</id>
+    <published>2017-08-15T16:22:22.000Z</published>
+    <updated>2017-08-15T16:24:43.420Z</updated>
+    
+    <content type="html"><![CDATA[<h3 id="1-实例变量和类变量"><a href="#1-实例变量和类变量" class="headerlink" title="1.实例变量和类变量"></a>1.实例变量和类变量</h3><p>Java程序的变量大体可分为成员变量和局部变量。其中局部变量可分为如下二类。</p>
+<ul>
+<li>形参:在方法签名中定义的局部变量，由方法调用者负责为其赋值，随方法的结束而消亡。</li>
+<li>方法内的局部变量:在方法内定义的局部变量，必须在方法内对其进行显式初始化口这种类型的局部变量从初始化完成后开始生效，随方法的结束而消亡。</li>
+<li>代码块内的局部变量:在代码块内定义的局部变量，必须在代码块内对其进行显式初始化。这种类型的局部变量从初始化完成后开始生效，随代码块的结束而消亡。</li>
+</ul>
+<p>局部变量的作用时间很短暂，他们都被存储在栈内存中。</p>
+<p>类体内定义的变量被称为成员变量〔英文是Field)。如果定义该成员变量时没有使用static<br>修饰，该成员变量又被称为非静态变量或实例变量;如果使用了static修饰，则该成员变量又可被称为静态变量或类变量</p>
+<p>(坑:表面上看定义成员变量是没有先后顺序的，实际上还是要采用合法的前向引用)如：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">int num=num2+1;</div><div class="line">int num2=2;</div></pre></td></tr></table></figure>
+<p>是会报错的，出得num2位静态比变量的时候。</p>
+<h3 id="2-实例变量和类变量的属性"><a href="#2-实例变量和类变量的属性" class="headerlink" title="2.实例变量和类变量的属性"></a>2.实例变量和类变量的属性</h3><p>使用static修饰的成员变量是类变量，属于该类本身:没有使用属于该类的实例。在同一个JVM内，侮个类只对应一个<br>Java对象口static修饰的成员变量是Class对象，但侮个类可以创建多个</p>
+<p>由于同一个JVM内每个类只对应一个static对象，因此同一个JVM内的一个类的类变量只需一块内存空间;但对于实例变量而言，改类每创建一次实例，就需要为实例变量分配一块内存空间。也就是说，程序中有几个实例，实例变量就需要几块内存空间。</p>
+<h3 id="3-实例变量的初始化时机"><a href="#3-实例变量的初始化时机" class="headerlink" title="3.实例变量的初始化时机"></a>3.实例变量的初始化时机</h3><p>对于实例变量，它是Java对象本身。每创建Java对象时都需要为实例变量分配内存空间，并对实例进行初始化。<br>程序可以在三个地方进行初始化：</p>
+<ul>
+<li>定义实例变量时指定初始值。</li>
+<li>非静态初始化块中对实例变量指定初始值。</li>
+<li>构造器中对实例变量指定初始值。<br>其中第1,2种方式都比在构造器初始化更早执行，当第1,2种的执行顺序与他们在源程序中的排列顺序相同。</li>
+</ul>
+<h3 id="4-类变量的初始化时机"><a href="#4-类变量的初始化时机" class="headerlink" title="4.类变量的初始化时机"></a>4.类变量的初始化时机</h3><p>类变量是属于Java类本身。从程序运行的角度来看，每个jvm对一个Java类只初始化一次，因此只有每次运行Java程序时，才会初始化该Java类，才会为该类的类变量分配内存空间，并执行初始化。</p>
+<p>程序可以在两个地方对类变量执行初始化：</p>
+<ul>
+<li>定义类变量时指定初始值。</li>
+<li>静态初始化块中对类变量指定初始值。</li>
+</ul>
+<p>这两种方式的执行顺序与它们在源程序中的排列顺序相同。</p>
+<h1 id="父类构造器"><a href="#父类构造器" class="headerlink" title="父类构造器"></a>父类构造器</h1><h3 id="1-隐式调用和显式调用"><a href="#1-隐式调用和显式调用" class="headerlink" title="1.隐式调用和显式调用"></a>1.隐式调用和显式调用</h3><p>当创建Java对象时，系统会先调用父类的非静态初始化块进行初始化。而这种调用是隐式调用。而第一次初始化时最优先初始化的是静态初始化块。接着会调用父类的一个或多个构造器进行初始化，这个调用是用过super()的方法来显式调用或者隐式调用。当所有父类初始化完之后才初始化子类。实例代码如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div></pre></td><td class="code"><pre><div class="line">class Animal&#123;</div><div class="line">	</div><div class="line">	static&#123;</div><div class="line">		System.out.println(&quot;Animal静态初始化块&quot;);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	&#123;</div><div class="line">	   System.out.println(&quot;Animal初始化块&quot;);</div><div class="line">	&#125;</div><div class="line">		</div><div class="line">	public Animal()&#123;</div><div class="line">		System.out.println(&quot;Animal构造器&quot;);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	</div><div class="line">&#125;</div><div class="line"></div><div class="line">class Cat extends Animal&#123;</div><div class="line">	public Cat(String name,int age)&#123;</div><div class="line">		super();</div><div class="line">		System.out.println(&quot;Cat构造器&quot;);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	static&#123;</div><div class="line">		System.out.println(&quot;Cat静态初始化块&quot;);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	&#123;</div><div class="line">		System.out.println(&quot;Cat初始化块&quot;);</div><div class="line">		weight=2.0;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	double weight=2.3;</div><div class="line"></div><div class="line">	public String toString()&#123;</div><div class="line">		return &quot;weight=&quot;+weight;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class JavaTest &#123;</div><div class="line"></div><div class="line">	public static void main(String[] args) &#123;</div><div class="line">		</div><div class="line">		Cat cat=new Cat(&quot;kitty&quot;,2);</div><div class="line">		System.out.println(cat);</div><div class="line">//		Cat cat2=new Cat(&quot;Garfied&quot;,3);</div><div class="line">//		System.out.println(cat2);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>输出的结果是：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-a28511aeced4c594.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="java.PNG"></p>
+<h3 id="2访问子类对象的实例变量"><a href="#2访问子类对象的实例变量" class="headerlink" title="2访问子类对象的实例变量"></a>2访问子类对象的实例变量</h3><p>子类因为继承父类所以可以访问父类的成员方法和变量，当一般情况下父类是访问不了子类的，因为父类不知道哪个子类继承。但是在特殊情况下是可以的，如下代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div></pre></td><td class="code"><pre><div class="line">class BaseClass&#123;</div><div class="line">	private int i=2;</div><div class="line">	public BaseClass()&#123;</div><div class="line">		this.display();</div><div class="line">	&#125;</div><div class="line">	public void display()&#123;</div><div class="line">		System.out.println(&quot;BaseClass&quot;);</div><div class="line">		System.out.println(i);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">&#125;</div><div class="line"></div><div class="line">class Derived extends BaseClass&#123;</div><div class="line">	private int i=22;</div><div class="line">	public Derived()&#123;</div><div class="line">		i=222;</div><div class="line">	&#125;</div><div class="line">	public void display()&#123;</div><div class="line">		System.out.println(&quot;Derived&quot;);</div><div class="line">		System.out.println(i);</div><div class="line">	&#125;</div><div class="line">	public void sub()&#123;</div><div class="line">		System.out.println(&quot;sub&quot;);</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class JavaTest &#123;</div><div class="line">	public static void main(String[] args) &#123;</div><div class="line">		Derived derived=new Derived();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>结果如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-9c668fadf1e445c9.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="java2.PNG"></p>
+<p>仔细看代码，好像怎么也不会输出0吧，为什么呢。</p>
+<p>首先我们要知道Java构造器只是起到对变量进行初始化的作用，而在执行构造器之前我们的对象已经初始化了，在内存中已经被分配起来了，而这些值默认是空值。</p>
+<p>其次this在代表正在初始化的对象，一般看会以为就是BaseClass对象，不过在上面代码里，this是放在BaseClass的构造器里，当时我们是在Derived()构造器执行的，是Derived()构造器隐式调用了BaseClass()构造器的代码，所以在这个情况下是this是Derived对象。所以当我们改为this.sub()时是报错的。</p>
+<p>此外这个this的编译类型是BaseClass，所以我们改为this.i的时候输出是2.</p>
+<p>所以应该避免在父类构造器中调用被子类重写的方法。</p>
+<h1 id="父子实例的内存控制"><a href="#父子实例的内存控制" class="headerlink" title="父子实例的内存控制"></a>父子实例的内存控制</h1><h3 id="1-继承成员变量和继承方法的区别"><a href="#1-继承成员变量和继承方法的区别" class="headerlink" title="1.继承成员变量和继承方法的区别"></a>1.继承成员变量和继承方法的区别</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div></pre></td><td class="code"><pre><div class="line">class Animal&#123;</div><div class="line">	public String name=&quot;Animal&quot;;</div><div class="line">	</div><div class="line">	public void sub()&#123;</div><div class="line">		System.out.println(&quot;AnimalSub&quot;);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">&#125;</div><div class="line">class Wolf extends Animal&#123;</div><div class="line">	public String name=&quot;Wolf&quot;;</div><div class="line"></div><div class="line">	public void sub()&#123;</div><div class="line">		System.out.println(&quot;WolfSub&quot;);</div><div class="line">	&#125;</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class JavaTest &#123;</div><div class="line">	public static void main(String[] args) &#123;</div><div class="line">		Animal animal=new Animal();</div><div class="line">		System.out.println(animal.name);</div><div class="line">		animal.sub();</div><div class="line">		Wolf wolf=new Wolf();</div><div class="line">		System.out.println(wolf.name);</div><div class="line">		wolf.sub();</div><div class="line">		Animal sub=new Wolf();</div><div class="line">		System.out.println(sub.name);</div><div class="line">		sub.sub();</div><div class="line">	&#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>结果如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-44fc60505bd44631.png?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="image.png"></p>
+<p>所以当声明类型为父类，运行类型为子类是，成员变量表现出父类，而方法表现出子类，这就是多态。</p>
+<h3 id="2-内存中的子类实例"><a href="#2-内存中的子类实例" class="headerlink" title="2.内存中的子类实例"></a>2.内存中的子类实例</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div></pre></td><td class="code"><pre><div class="line">class Fruit&#123;</div><div class="line">	String color=&quot;未确定颜色&quot;;</div><div class="line">	</div><div class="line">	public Fruit getThis()&#123;</div><div class="line">		return this;</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	public void info()&#123;</div><div class="line">		System.out.println(&quot;Fruit方法&quot;);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">&#125;</div><div class="line"></div><div class="line">public class JavaTest extends Fruit&#123;</div><div class="line">	</div><div class="line">	@Override</div><div class="line">	public void info() &#123;</div><div class="line">		System.out.println(&quot;JavaTest方法&quot;);</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	public void AccessSuperInfo()&#123;</div><div class="line">		super.info();</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	public Fruit getSuper()&#123;</div><div class="line">		return super.getThis();</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">	String color=&quot;红色&quot;;</div><div class="line">	</div><div class="line">	public static void main(String[] args) &#123;</div><div class="line">		JavaTest javaTest=new JavaTest();</div><div class="line">		Fruit f=javaTest.getSuper();</div><div class="line">		</div><div class="line">		System.out.println(&quot;javaTest和f所引用的对象是否相同:&quot;+(javaTest==f));</div><div class="line">		System.out.println(&quot;所引用对象的color实例变量：&quot;+javaTest.color);</div><div class="line">		System.out.println(&quot;所引用对象的color实例变量：&quot;+f.color);</div><div class="line">		</div><div class="line">		javaTest.info();</div><div class="line">		f.info();</div><div class="line">		javaTest.AccessSuperInfo();</div><div class="line">	&#125;</div><div class="line">	</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>当创建一个对象时，系统不仅为该类的实例变量分配内存,同时也为其父类定义的所有实例变量分配内存,即是子类定义了与父类同名的实例变量。也就是说，当系统创建一个Java对象时，如果该Java类有两个父类(一个直接父类A，一个间接父类g ),假设A类中定义了2个实例变量，B类<br>中定义了3个实例变量，当前类中定义了2个实例变量，那么这个Java对象将会保存2+3十2个实例变量。</p>
+<p>如果子类里定义了与父类中已有变量同名的变量，那么子类中定义的变量会隐藏父类中定义的变量，而不是覆盖。因此系统创建子类对象是依然会为父类定义的，被隐藏的变量分配内存空间。</p>
+<p>为了在子类中访问父类定义的，被隐藏的变量和方法，可以使用super来限定修饰这些变量和方法。</p>
+<h3 id="3-父，子类的类变量"><a href="#3-父，子类的类变量" class="headerlink" title="3.父，子类的类变量"></a>3.父，子类的类变量</h3><p>如果在子类中要访问父类中被隐藏的静态变量和方法，程序有两种方式：</p>
+<ul>
+<li>直接使用父类的类名作为主调来访问类变量</li>
+<li>使用super.作为限定来访问类变量</li>
+</ul>
+<p>一般情况下，都建议使用第一种方式访问类变量，因为类变量属于类本身,使用类名做主调来访问可以较好的可读性 </p>
+<h1 id="final修饰符"><a href="#final修饰符" class="headerlink" title="final修饰符"></a>final修饰符</h1><h3 id="1-final-修饰的变量"><a href="#1-final-修饰的变量" class="headerlink" title="1.final 修饰的变量"></a>1.final 修饰的变量</h3><p>final修饰的实例变量必须显示指定初始值，只能在如下三个位置指定初始值。</p>
+<ul>
+<li>定义final实例变量时指定初始值</li>
+<li>在非静态初始化块中为final实例变量指定初始值</li>
+<li>在构造器中为final实例变量指定初始值</li>
+</ul>
+<p>对于普通实例java可以指定默认初始化，而final实例变量只能显示指定初始化。</p>
+<h3 id="2-执行‘宏替换’的变量"><a href="#2-执行‘宏替换’的变量" class="headerlink" title="2.执行‘宏替换’的变量"></a>2.执行‘宏替换’的变量</h3><p>在定义时final类变量指定了初始值，该初始值在编译时就被确定下来，这个final变量本质上已经不再是变量而是一个直接量，如果被赋的表达式只是基木的算术表达式或字符串连接运算，没有访问普通变量，调用方法，Java编译器同样会将这种final变量当成“宏变量”来处理。</p>
+<h3 id="3-final方法不能重写"><a href="#3-final方法不能重写" class="headerlink" title="3.final方法不能重写"></a>3.final方法不能重写</h3><p>如果父类中某个方法使用了final修饰符进行修饰，那么这个方法将不可能被他的子类访问到，因此这个方法也不可能被他的子类重写。从这个层面说，private和final同时修饰某个方法没有太大的意义，但是被java语法允许。</p>
+<h3 id="4-内部类中的局部变量"><a href="#4-内部类中的局部变量" class="headerlink" title="4.内部类中的局部变量"></a>4.内部类中的局部变量</h3><p>Java要求所有被内部类访问的局部变量都使用final修饰也是有其原因的。对于井通的局部变量而言，‘它的作用域就停留在该方法内，当方法执行结束后，该局部变量也随之消失;但内部类则可能产生隐式的“闭包(Closure)”，闭包将使得局部变量脱离它所在的方法继续存在。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      Java程序的变量大体可分为成员变量和局部变量。其中局部变量可分为如下二类。
+    
+    </summary>
+    
+      <category term="java基础" scheme="http://jack921.win/categories/java%E5%9F%BA%E7%A1%80/"/>
+    
+    
+      <category term="java" scheme="http://jack921.win/tags/java/"/>
+    
+  </entry>
   
   <entry>
     <title>Flexboxlayout使用详解</title>
