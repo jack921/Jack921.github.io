@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://jack921.win/"/>
-  <updated>2017-08-20T17:09:58.735Z</updated>
+  <updated>2017-08-20T17:13:14.177Z</updated>
   <id>http://jack921.win/</id>
   
   <author>
@@ -14,6 +14,65 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>疯狂Java笔记之常见java集合的实现细节</title>
+    <link href="http://jack921.win/2017/08/21/%E7%96%AF%E7%8B%82Java%E7%AC%94%E8%AE%B0%E4%B9%8B%E5%B8%B8%E8%A7%81java%E9%9B%86%E5%90%88%E7%9A%84%E5%AE%9E%E7%8E%B0%E7%BB%86%E8%8A%82/"/>
+    <id>http://jack921.win/2017/08/21/疯狂Java笔记之常见java集合的实现细节/</id>
+    <published>2017-08-20T17:12:17.000Z</published>
+    <updated>2017-08-20T17:13:14.177Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="Set和Map"><a href="#Set和Map" class="headerlink" title="Set和Map"></a>Set和Map</h1><h3 id="1-Set和Map的关系"><a href="#1-Set和Map的关系" class="headerlink" title="1.Set和Map的关系"></a>1.Set和Map的关系</h3><p>首先Set是一种集合元素无序，不可重复的集合。而Map则代表一种有多个key-value对组成的集合，Map集合类似于传统的关联数据。看起来他们没哟什么关联，实际上Set和Map是有莫大的关联的。可以说Map是Set集合的扩展。</p>
+<p>当我们只看Map的Key时，会发现所有的key不能重复，key之间没有顺序。也就是说将Map所有的key集合起来就组成了一个set集合。Map也提供了如下方法来返回组成的set集合<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">Set&lt;K&gt; keySet()</div></pre></td></tr></table></figure></p>
+<p>对于一个Map集合而言，它本质上是一个关联数组，关联数组中的key-value对之间有严格的对应关系，那将key-value对捆绑在一起对待，如下所示：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-8c1f2ff1204b3436.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="java4.PNG"></p>
+<h3 id="2-HashMap和HashSet"><a href="#2-HashMap和HashSet" class="headerlink" title="2.HashMap和HashSet"></a>2.HashMap和HashSet</h3><p>在HashSet里，系统采用Hash算法决定集合元素的存储位置，这样可以保证快速存，取集合元素；对于HashMap而言，系统将value当初key的‘附属物’，系统根据Hash算法开决定key的存储位置，这个可以保证快速存，取集合key,而value总是紧随key存储。</p>
+<p>集合号称存储的是Java对象，但实际上并不会真正将Java对象放入Set集合中，而只是在Set集合中保留这些对象的引用而己。也就是说，Java集合实际上是多个引用变量所组成的集合，这些引用变量指向实际的Java对象。对于java集合他只是多个引用变量的集合。</p>
+<p>当程序试图将一个key-value对放入HashMap中时，首先根据该key的hashCade()返回值决定该Entry的存储位置—如果两个Entry的key的hashCade返回值相同，那么它们的存储位置相同:如果这两个Entry的key通过equals比较返回true，则新添加Entry的value将覆盖集合中原有Entry的value，但key不会覆盖;如果这两个Entry的key通过equal比较返回false ,则新添加的Entry将与集合中原有的Entry形成Entry链，而且新添加的Entry位于Entry链的头部</p>
+<p>当系统开始初始化HashMap时，系统会创建一个长度为capacity的Entry数组。这个数组可以存储元素的位置被称为“桶(bucket)”,每个bucket都有其指定的索引，系统可以根据其索引快速访问该bucket里存储的元素。</p>
+<p>无论何时，HashMap的每一个“桶”只存储一个元素(即一个Entry).由于Entry对象可以包含一个引用变量（就是Entry构造器的最后一个参数）用于指向下一个Entry，因此可能出现：HashMap的bucket中只有一个Entry,但这个Entry指向另一个Entry这就形成一个Entry链，如图:<br><img src="http://upload-images.jianshu.io/upload_images/925576-0d509a47fc604546.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="set.PNG"></p>
+<p>HashMap在每一个bucket里只有一个Entry,所以可以根据索引快速取出该bucket里的Enrty.当发生hash冲突时，单个bucket里存储的不是一个Entry,而是一个Entry链，系统会按顺序遍历每个Entry,知道找到想搜到的Entry为止，即使要搜索的末端，系统也会循环到最后找到该元素。</p>
+<h3 id="3-TreeMap和TreeSet"><a href="#3-TreeMap和TreeSet" class="headerlink" title="3.TreeMap和TreeSet"></a>3.TreeMap和TreeSet</h3><p>TreeSet底层实际使用的容器就是TrenMap.绝大部分的方法都是直接调用TreeMap的方法来实现的。而对于TreeMap而言，它采用一种被称为‘红黑树’的排序二叉树来保存Map中的每个Entry即每个Entry都是红黑树的一个节点。</p>
+<p>对于TreeMap向言，由于它底层采用一棵红黑树来保存集合中的Entry，这意味着TreeMap添加元素、取出元素的性能都比HashMap低。当TreeMag添加元素时，需要通过循坏找到新<br>增Entry的插入位置，因此比较耗性能;当从TreeMap中取出元素时，需要通过循环才能找到合适的Entry，也比较耗性能·但TreeMap, TreeSet相比HashMag,HashSet的优势在于:’TreeMap中的所有Entry总是按key根据指定的排序规则保持有序状态，TreeSet中的所有元素总是根据指定的排序规则保持有序状态。</p>
+<h1 id="Map和List"><a href="#Map和List" class="headerlink" title="Map和List"></a>Map和List</h1><h3 id="1-Map的values-方法"><a href="#1-Map的values-方法" class="headerlink" title="1.Map的values()方法"></a>1.Map的values()方法</h3><p>不管是HashIvlap，还是TreeMap，它们的values()方法都可返回其所有value组成的Collection集合。按照通常理解，这个Collection集合应该是一个List集合，因为Map的多个valu。允许重复。<br>但实际上，HashMap,TreeMap的values()方法的实现要更巧妙。这两个Mad对象的values()方法返回的是一个不存储元素的Collection集合，当程序遍历Collection集合时，实际上就是遍历Map对象的value </p>
+<p>HashMap和TreeMap的values()方法并未把Map中的value重新组合成一个包含元素的集合对象，这样就可以降低系统内存开销。</p>
+<h3 id="2-Map和List的关系"><a href="#2-Map和List的关系" class="headerlink" title="2.Map和List的关系"></a>2.Map和List的关系</h3><ul>
+<li>从底层实现来看，Set和Map很相似；从用法的角度来看，Map和List也有很大的相似之处。</li>
+</ul>
+<p>1.Map接口提供了get(K key)方法，允许Map对象根据key来取得value.<br>2.List接口提供了get(int index)方法，允许list对象根据元素索引来取得value</p>
+<p>Map和List在底层实现上没有太大的相似之处，只是用法有一些相似之处。</p>
+<h1 id="ArrayList和LinkedList"><a href="#ArrayList和LinkedList" class="headerlink" title="ArrayList和LinkedList"></a>ArrayList和LinkedList</h1><h3 id="1-Vector和ArrayList的区别"><a href="#1-Vector和ArrayList的区别" class="headerlink" title="1.Vector和ArrayList的区别"></a>1.Vector和ArrayList的区别</h3><p>Vector和ArrayList这个两个集合类的本质并没有太大的不同，它们都实现了List接口，而且底层都是基于Java数组来存储集合元素的。</p>
+<p>此外从序列化机制的角度看，ArrayList的实现比Vector的实现更安全<br>另外Vector是ArrayList的线程安全版本，ArrayList和Vector觉大部分方法的实现都是相同的，只是Vector的方法增加了synchronized修饰。</p>
+<h3 id="2-ArrayList和LinkedList的实现差异"><a href="#2-ArrayList和LinkedList的实现差异" class="headerlink" title="2.ArrayList和LinkedList的实现差异"></a>2.ArrayList和LinkedList的实现差异</h3><p>List代表一种线性表的数据结构。ArrayList则是一种顺序存储的线性表，ArrayList底层采用数组来保存每个集合元素，LinkedList则是一种链式存储的线性表，其本质上就是一个双向链表，但它不仅实现了List接口，还实现了Deque接口。也就是说，LinkedList既可以当成双向链表使用，也可以当成队列使用，还可以当成栈来使用(Deque代表双端队列，既具有队列的特征.也具有栈的特征)。</p>
+<p>ArrayList<br>因为ArrayList底层数据结构是数组，所以我们插入元素是需要完成两件事:</p>
+<ul>
+<li>保证ArrayList底层封装的数组长度大于集合数据长度</li>
+<li>插入之前将所有元素“整体搬家”，向后移动一格</li>
+</ul>
+<p>同理在删除元素是也要对元素进行“整体搬家”，这就导致增加和删除的性能非常差，当时在取出数据元素时，性能基本和数组是一样的。</p>
+<p>LinkedList<br>因为LinkedSet是采用双向链表的，如果单纯的添加某个节点性能是很好的，当时如果需要指定索引处添加节点，LinkedList必须必须先找到索引处的节点，这个搜索过程系统开销也是不少的，删除也同理，如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/925576-edfa91daf0e77368.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="LinkedList.PNG"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-c96ca8a6fb7db1ac.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="LinkedList2.PNG"></p>
+<p>不过弊端是对于ArrayList而言，由于它底层采用数组来保存集合元素，因此可以直接根据数组索引取出index位置的元素;但对于LinkedList就比较麻烦，LinkedList必须逐个元素地搜索，直到找到第index个元素为止。所以性能相对较低。</p>
+<h3 id="3-ArrayList和LinkedList的性能分析和适用场景"><a href="#3-ArrayList和LinkedList的性能分析和适用场景" class="headerlink" title="3.ArrayList和LinkedList的性能分析和适用场景"></a>3.ArrayList和LinkedList的性能分析和适用场景</h3><p>当程序需要以get(int index)获取List集合指定的索引出的元素，ArrayList性能大大的优于LinkedList。因为ArrayList底层以数组来保存集合元素，所以调用get(int index)方法获取指定索引处的元素时，底层实际调用elementData[index]来返回改元素，因此性能非常好，而LinkedList则必须逐个的搜索。</p>
+<p>当程序调用add(int index,Object obj)向List添加数据是，ArrayList需要“整体搬家”才能实现添加，而LinkedList需要找到索引而不用整体搬家，当时找索引也需要消耗一些系统性能，因为他是逐个搜索。同理，删除也是这样子。</p>
+<p>当添加的数据个数大于底层数组的长度时，那么ArrayList必须创建一个长度为原来长度1.5倍的数组，再由垃圾回收机制进行回收。这样系统开销也有点大了。而LinkedList就不存在这个问题。</p>
+<p>不过从大多数应用场景来说ArrayList总体性能还是优于LinkedList。</p>
+<h1 id="Iterator迭代器"><a href="#Iterator迭代器" class="headerlink" title="Iterator迭代器"></a>Iterator迭代器</h1><h3 id="1-Iterator实现类与迭代器模式"><a href="#1-Iterator实现类与迭代器模式" class="headerlink" title="1.Iterator实现类与迭代器模式"></a>1.Iterator实现类与迭代器模式</h3><p>Java的lteratar和Enumeration两个接口都是迭代器模式的代表之作，它们就是迭代器模式里的“迭代器接口”。所谓迭代器模式指的是，系统为遍历多种数据列表、集合，容器提供一个标准的“迭代器接口”，这些数据列表、集合、容器就可面向相同的“迭代器接口”编程，通过相同的迭代器接口访问不同数据列表‘集合、容器里的数据.不同的数据列表、集合、容器如何实现这个“迭代器接口”，<br>则交给各数据列表、集合、容器自己完成。</p>
+<h3 id="2-迭代是删除指定元素"><a href="#2-迭代是删除指定元素" class="headerlink" title="2.迭代是删除指定元素"></a>2.迭代是删除指定元素</h3><p>对于TreeSet,  HashSet等Set集合而言，当使用Iterator遍历它们时，如果正在遍历最后一个集合元素，那么使用Set集合的remove()方法删除集合的任意元素并不会引发ConcurrentModificatianException异常，当正在遍历其他元素时删除集合的任意元素都将引发该异常。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      首先Set是一种集合元素无序，不可重复的集合。而Map则代表一种有多个key-value对组成的集合，Map集合类似于传统的关联数据。看起来他们没哟什么关联，实际上Set和Map是有莫大的关联的。可以说Map是Set集合的扩展。
+    
+    </summary>
+    
+      <category term="Java" scheme="http://jack921.win/categories/Java/"/>
+    
+    
+      <category term="Java" scheme="http://jack921.win/tags/Java/"/>
+    
+  </entry>
   
   <entry>
     <title>疯狂Java笔记之表达式中的陷阱</title>
