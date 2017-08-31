@@ -5,7 +5,7 @@
   <link href="/atom.xml" rel="self"/>
   
   <link href="http://jack921.win/"/>
-  <updated>2017-08-20T17:13:14.177Z</updated>
+  <updated>2017-08-31T16:44:00.540Z</updated>
   <id>http://jack921.win/</id>
   
   <author>
@@ -14,6 +14,765 @@
   </author>
   
   <generator uri="http://hexo.io/">Hexo</generator>
+  
+  <entry>
+    <title>疯狂java笔记之树和二叉树</title>
+    <link href="http://jack921.win/2017/09/01/%E7%96%AF%E7%8B%82java%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%A0%91%E5%92%8C%E4%BA%8C%E5%8F%89%E6%A0%91/"/>
+    <id>http://jack921.win/2017/09/01/疯狂java笔记之树和二叉树/</id>
+    <published>2017-08-31T16:43:03.000Z</published>
+    <updated>2017-08-31T16:44:00.540Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="树的概述"><a href="#树的概述" class="headerlink" title="树的概述"></a>树的概述</h1><p>树是一种非常常用的数据结构，树与前面介绍的线性表，栈，队列等线性结构不同，树是一种非线性结构</p>
+<h3 id="1-树的定义和基本术语"><a href="#1-树的定义和基本术语" class="headerlink" title="1.树的定义和基本术语"></a>1.树的定义和基本术语</h3><p>计算机世界里的树，是从自然界中实际的树抽象而来的，它指的是N个有父子关系的节点的有限集合。对于这个有限的节点集合而言，它满足如下条件：</p>
+<ul>
+<li>当N=0时，改节点集合为空，这课树也被称为空树</li>
+<li>在任意的非空树中，有且仅有一个根(root)节点</li>
+<li>当N&gt;1时，除根节点以外的其余节点可分为M个互为相交的有限集合T1,T2,…,Tm，其中的每个集合本身又是一棵树，并称其为根的子树（subtree）。</li>
+</ul>
+<p>从上面定义可以发现树的递归特性：一棵树由根和若干棵子树组成，而每棵子树又由若干棵更小的子树组成。</p>
+<p>树中任一节点可以有0或多个子节点，但只能有一个父节点。根节点是一个特例，根节点没有父节点，叶子节点没有子节点。树中每个节点既可以是其上一级节点的子节点，也可以是下一级节点的父节点，因此同一个节点既可以是父节点，也可以是子节点(类似于一个人—————他既是他儿子的父亲，又是他父亲的儿子)。</p>
+<p>很显然，父子关系是一种非线性关系，所以树结构是非线性结构。</p>
+<p>如果按节点是否包含子节点来分，节点可以分成以下两种:</p>
+<ul>
+<li>普通节点：包含子节点的节点</li>
+<li>叶子节点：没有子节点的节点，因此叶子节点不可作为父节点</li>
+</ul>
+<p>如果按节点是否具有唯一的父节点来分，节点有可分为如下两种：</p>
+<ul>
+<li>根节点：没有父节点的节点，根节点不可作为子节点</li>
+<li>普通节点：具有唯一父节点的节点</li>
+</ul>
+<p>一棵树只能有一个根节点，如果一棵树有了多个根节点，那么它已经不再是一棵树了，而是多棵树的集合，有时也被称为森林。示意图如下：<br><img src="http://upload-images.jianshu.io/upload_images/925576-bd5e26cd54288a2c.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="tree.PNG"><br>与树有关的术语有如下一些：</p>
+<ul>
+<li>节点：树的最基本组成单元，通常包括一个数据元素及若干指针用于指向其他节点。</li>
+<li>节点的度：节点拥有的子树的个数被称为节点的度（degree）</li>
+<li>树的度：树中所有节点的度的最大值就是该树的度</li>
+<li>叶子节点：度为0的节点被称为叶子节点或终端节点</li>
+<li>分支节点：度不为0的节点被称为分支节点或非终端节点</li>
+<li>子节点,父节点，兄弟节点：节点的子树的根被称为该节点的子节点，而该节点称为子节点的父节点(parent).具有相同父节点的子节点之间互称为兄弟节点。</li>
+<li>节点的层次(level):节点的层次从根开始算起，根的层次值为1，其余节点的层次值为父节点层次值加l。</li>
+<li>树的深度(depth):树中节点的最大层次值称为树的深度或高度。</li>
+<li>有序树与无序树:如果将树中节点的各棵子树看成从左到右是有序的(即不能互换),则称该树为有序树,否则称为无序树。</li>
+<li>祖先节点(ancestor)：从根到该节点所经分支上的所有节点</li>
+<li>后代节点(descendant):以某节点为根的子树中任一节点都称为该节点的后代节点。</li>
+<li>森林(forest):森林是；两颗或两颗以上互不相交的树的集合，删去一棵树的根，就得到一个森林。</li>
+</ul>
+<h3 id="树的基本操作"><a href="#树的基本操作" class="headerlink" title="树的基本操作"></a>树的基本操作</h3><p>如果需要实现一棵树，程序不仅要以合适的方式保存该树的所有节点，还要记录节点与节点之间的父子关系。接下来，还应该为树实现如下基本操作。</p>
+<ul>
+<li>初始化:通常是一个构造器，用于创建一棵空树，或者以指定节点为根来创建树。</li>
+<li>为指定节点添加子节点</li>
+<li>判断树是否为空</li>
+<li>返回根节点</li>
+<li>返回指定节点（非根节点）的父节点</li>
+<li>返回指定节点（非叶子节点）的所有子节点</li>
+<li>返回指定节点（非叶子节点）的第i个子节点</li>
+<li>返回该树的深度</li>
+<li>返回指定节点的位置<br>为了实现树这种数据结构，程序必须能记录节点与节点之间的父子关系，为此有一下两种选择：</li>
+<li>父节点表示法:每个子节点都记录它的父节点。</li>
+<li>子节点链表示法:每个非叶子节点通过一个链表来记录它所有的子节点。</li>
+</ul>
+<h3 id="父节点表示法"><a href="#父节点表示法" class="headerlink" title="父节点表示法"></a>父节点表示法</h3><p>通过前面的介绍可以发现，树中除根节点之外的每个节点都有一个父节点。为了记录树中节点与节点之间的父子关系，可以为每个节点增加一个parent域，用以记录该节点的父节点。用如下图和如下表来表示<br><img src="http://upload-images.jianshu.io/upload_images/925576-ffd2978506d5efa5.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="tree_show.PNG"></p>
+<table>
+<thead>
+<tr>
+<th>数组索引</th>
+<th>data</th>
+<th>parent</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>0</td>
+<td>A</td>
+<td>-1</td>
+</tr>
+<tr>
+<td>1</td>
+<td>B</td>
+<td>0</td>
+</tr>
+<tr>
+<td>2</td>
+<td>C</td>
+<td>0</td>
+</tr>
+<tr>
+<td>3</td>
+<td>D</td>
+<td>0</td>
+</tr>
+<tr>
+<td>4</td>
+<td>E</td>
+<td>1</td>
+</tr>
+<tr>
+<td>5</td>
+<td>F</td>
+<td>3</td>
+</tr>
+<tr>
+<td>6</td>
+<td>G</td>
+<td>3</td>
+</tr>
+<tr>
+<td>7</td>
+<td>H</td>
+<td>4</td>
+</tr>
+<tr>
+<td>8</td>
+<td>I</td>
+<td>4</td>
+</tr>
+<tr>
+<td>9</td>
+<td>J</td>
+<td>4</td>
+</tr>
+<tr>
+<td>10</td>
+<td>K</td>
+<td>6</td>
+</tr>
+<tr>
+<td>…</td>
+<td>…</td>
+<td>…</td>
+</tr>
+</tbody>
+</table>
+<p>由此可见，只要用一个节点数组来保存树里的每个节点，并让每个节点记录其父节点在数组中的索引即可。</p>
+<h3 id="子节点链表表示法"><a href="#子节点链表表示法" class="headerlink" title="子节点链表表示法"></a>子节点链表表示法</h3><p>父节点表示法的思想是让每个节点“记住”它的父节点的索引，父节点表示法是从子节点着手的;反过来，还有另外一种方式:让父节点“记住”它的所有子节点口在这种方式下，由于每个父节点需要记住多个子节点，因此必须采用“子节点链”表示法。示意图如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-9f70fcf832367c1d.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="tree_linked.PNG"></p>
+<h1 id="二叉树"><a href="#二叉树" class="headerlink" title="二叉树"></a>二叉树</h1><h3 id="二叉树的定义和基本概念"><a href="#二叉树的定义和基本概念" class="headerlink" title="二叉树的定义和基本概念"></a>二叉树的定义和基本概念</h3><p>二叉树指的是每个节点最多只能有两个子树的有序树。通常左边的子树被称作“左子树”(left subtree)，右边的子树被称为“右子树”(right subtree).由此可见，二叉树依然是树，它是一种特殊的树。<br>二叉树的每个节点最多只有来两颗树(不存在度大于2的节点)，二叉树的子树有左，右之分，次序不能颠倒。<br>树和二叉树的两个重要区别如下：</p>
+<ul>
+<li>树中节点的最大度数没有限制，而二叉树节点的最大度数为2，也就是说，二叉树是节点的最大度数为2的树。</li>
+<li>无序树的节点无左右之分，而二叉树的节点有左，右之分，也就是说，二叉树是有序树。</li>
+</ul>
+<p>一棵深度为k的二叉树，如果它包含了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">2^k-1</div></pre></td></tr></table></figure></p>
+<p>个节点，就把这棵二叉树称为满二叉树。满二叉树的特点是。每一层上的节点数都是最大节点数，即各层节点数分别为1,2,4,8, 16,…,满二叉树下图所示：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-1434816834887e07.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="two_tree.PNG"></p>
+<p>一颗有n个节点的二叉树，按满二叉树的编号方式对它进行编号，若树中所有节点和满二叉树1~n编号完全一致，则称该树为完全二叉树。也就是说，如果一颗二叉树除最后一层外，其余层的所有节点都是满的，并且最后一层或者是满的，或者仅在右边缺少若干连续的节点，则此二叉树就是完全二叉树。 </p>
+<p>综上所述，二叉树大致有如下几个性质：</p>
+<ul>
+<li>二叉树第i层上的节点数据至多为2的i-1次方</li>
+<li>深度为k的二叉树至多有2的k次方-1个节点.满二叉树的每层节点的数量依次为1, 2, 4,8,…,因此深度为k的满二叉树包含的节点数为公比为2的等比数列的前k项总和，<br>即2的k次方一1。</li>
+<li>在任何一棵二叉树中，如果其叶子节点的数量为n0,度为2的子节点数量为n2，则<br>n0=n2 + 1。这是因为:如果为任意叶子节点增加一个子节点，则原有叶子节点变成非叶子节点，新增节点变成叶子节点，上述等式不变;如果为任意叶子节点增加两个子节点，则原有叶子节点变成度为2的非叶子lto点，新增的两个节点变成叶子节点，上述等式依然不变。</li>
+<li>具有n个节点的完全二叉树的深度为log2(n+1)</li>
+<li><p>对于一颗具有n个节点的完全二叉树的节点按层自左向右编号，则对任一编号为i(n&gt;=i&gt;=1)的节点有下列性质。</p>
+</li>
+<li><p>当i==1时，节点i是二叉树的根；若i&gt;1，则节点的父节点是i/2</p>
+</li>
+<li>若2i&lt;n,则节点i有左孩子，左孩子的编号是2i;否则，节点无左孩子，并且是叶子节点</li>
+<li>若2i+1&lt;=n,则节点i有右孩子，右孩子的编号是2i+1;否则，节点无右孩子。</li>
+<li>1~n/2范围的节点都是有孩子节点的非叶子节点，其余的节点全部都是叶子节点。编号为n/2的节点可能只有左子节点，也可能即有左子节点，又有右子节点。</li>
+</ul>
+<h3 id="二叉树的基本操作"><a href="#二叉树的基本操作" class="headerlink" title="二叉树的基本操作"></a>二叉树的基本操作</h3><p>二叉树记录其节点之间的父子关系更加简单，因为二叉树中的每个节点最多只能保存两个子节点。接下来，程序也需要为二叉树实现如下基本操作。</p>
+<ul>
+<li>初始化：通常是一个构造器，用于创建一颗空树，或者以指定节点为根来创建二叉树。</li>
+<li>为指定节点添加子节点</li>
+<li>判断二叉树是否为空</li>
+<li>返回根节点</li>
+<li>返回指定节点(非根节点)的父节点</li>
+<li>返回指定节点(非叶子节点)的左子节点</li>
+<li>返回指定节点(非叶子节点)的右子节点</li>
+<li>返回该二叉树的深度</li>
+<li>返回指定节点的位置</li>
+</ul>
+<p>要实现二叉树这种数据结构，有以下三种选择。</p>
+<ul>
+<li>顺序存储:采用数组来记录二叉树的所有节点。</li>
+<li>二叉链表存储:每个节点保留一个left,right域，分别指向其左、右子节点。</li>
+<li>三叉链表存储:每个节点保留一个left, right,parent域，分别指向其左、右子节点和父节点。</li>
+</ul>
+<h3 id="二叉树的顺序存储"><a href="#二叉树的顺序存储" class="headerlink" title="二叉树的顺序存储"></a>二叉树的顺序存储</h3><p>顺序存储指的是充分利用满二叉树的特性:每层的节点数分别为1, 2, 4, 8,…,2的(i-1)2的i次方。一棵<br>深度为i的二叉树最多只能包含2的i次方一1个节点，因此只要定义一个长度为2的i次方一1的数组即可存储这棵二叉树。</p>
+<p>对于普通二叉树(不是满二叉树)，那些空出来的节点对应的数组元素留空就可以了。由此可见，二叉树采用顺序存储会造成一定的空间浪费。对于下图1所示的二叉树(完全二叉树)，采用下图2所示的数组来保存即可。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-a177852b43af401f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="图1.PNG"></p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-f95bb601717e36a3.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="图2.PNG"></p>
+<p>对于左图所示的二叉树，需使用右图所示的数组来保存。<br><img src="http://upload-images.jianshu.io/upload_images/925576-c28307f09de9b13d.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="compare_tree.PNG"></p>
+<p>当使用数组来存储二又树的所有节点时可能会产生一定的空间浪费，如果该二叉树是完全二叉树，就不会有任何空间浪费了;但如果该二叉树的所有节点都只有右子节点，那么就会产生相当大的空间浪费.</p>
+<h3 id="二叉树的二叉链表存储"><a href="#二叉树的二叉链表存储" class="headerlink" title="二叉树的二叉链表存储"></a>二叉树的二叉链表存储</h3><p>二叉链表存储的思想是让每个节点都能“记住”它的左，右两个子节点。为每个节点增加left,right两个指针，分别引用改节点的左，右两个子节点，因此二叉链表存储的每个节点有如下图结构：<br><img src="http://upload-images.jianshu.io/upload_images/925576-d6c14c93154ffe70.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="two_fork_tree.PNG"></p>
+<p>二叉链表存储的二叉树的节点大致有如下定义：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div></pre></td><td class="code"><pre><div class="line">class Node&#123;</div><div class="line">    Object data;</div><div class="line">    Node left;</div><div class="line">    Node right;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>对于这种二叉链表存储的二叉树，如果程序需要，为指定节点添加子节点也非常容易，让父节点的left或right引用指向新节点即可。</p>
+<h3 id="二叉树的三叉链表存储"><a href="#二叉树的三叉链表存储" class="headerlink" title="二叉树的三叉链表存储"></a>二叉树的三叉链表存储</h3><p>三叉链表存储的思想是让每个节点不仅“记住”它的左右两个子节点，还要“记住”它的父节点，因此需要为每个节点增加left,right和parent三个指针，分别引用该节点的左，右两个子节点和父节点。因此，三叉链表存储的每个节点有如下图的结构：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-66708589cd35871f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="three_tree.PNG"></p>
+<p>因此三叉链表存储的二叉树的节点大致如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line">class Node&#123;</div><div class="line">    Object data;</div><div class="line">    Node left;</div><div class="line">    Node right;</div><div class="line">    Node parent;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>对于这种三叉链表存储的二叉树，如果程序需要，为指定节点添加子节点也非常容易，除了要维护父节点的left,right引用之外，还要维护新增节点的parent引用。</p>
+<h1 id="遍历二叉树"><a href="#遍历二叉树" class="headerlink" title="遍历二叉树"></a>遍历二叉树</h1><p>遍历二叉树指的是按某种规律依次访问二叉树的每个节点，对二叉树的遍历过程就是讲非线性结构的二叉树的节点排列成线性序列的过程。</p>
+<p>如果采用顺序结构来保存二叉树，程序遍历二叉树非常容易，无须进行任何思考，直接遍历底层数组即可。如果采用链表来保存二叉树的节点，则有以下两种遍历方式。</p>
+<ul>
+<li>深度优先遍历：这种遍历算法将先访问到树中最深层次的节点</li>
+<li>广度优先遍历：这种遍历算法将逐层访问每层的节点，先访问根（第一层）节点，然后访问第二层的节点…..一次类推。因此，广度优先遍历方法又被称为按层遍历。</li>
+<li>先（前）序遍历二叉树</li>
+<li>中序遍历二叉树</li>
+<li>后序遍历二叉树</li>
+</ul>
+<p>如果L,D,W表示左子树、根、右子树，习惯上总是必须先遍历左子树，后遍历右子树，根据遍历根节点的顺序不同，上面三种算法可表示如下。</p>
+<ul>
+<li>DLR:先序遍历</li>
+<li>LDR:中序遍历</li>
+<li>LRD:后序遍历</li>
+</ul>
+<p>深度遍历的先序遥历、中序遍历、后序遍历这三种遍历方式的名称都是针对根节点(D)而言的。先处理根节点(D)时就称为先序遍历。其次处理根节点(D)时就称为中序遍历;最后处理根节点(D)时就称为后序遍历。</p>
+<h3 id="先序遍历"><a href="#先序遍历" class="headerlink" title="先序遍历"></a>先序遍历</h3><p>先序遍历指先处理根节点，其处理顺序如下：<br>(1) 访问根节点<br>(2) 递归遍历左子树<br>(3) 递归遍历右子树</p>
+<h3 id="中序遍历"><a href="#中序遍历" class="headerlink" title="中序遍历"></a>中序遍历</h3><p>中序遍历指其次处理根节点.其处理顺序如下。<br>(1) 递归遍历左子树<br>(2) 访问根节点<br>(3) 递归遍历右子树</p>
+<h3 id="后序遍历"><a href="#后序遍历" class="headerlink" title="后序遍历"></a>后序遍历</h3><p>后序遍历指最后处理根节点，其处理顺序如下。<br>(1) 递归遍历左子树<br>(2) 递归遍历右子树<br>(3) 访问根节点</p>
+<h3 id="广度优先-按层-遍历"><a href="#广度优先-按层-遍历" class="headerlink" title="广度优先(按层)遍历"></a>广度优先(按层)遍历</h3><p>广度优先遍历又称为按层遍历，整个遍历算法是先遍历几叉树的第一层(根节点)，再遍历根节点的两个子’节点(第二层)……依此类推，逐层遍历二叉树的所有节点。</p>
+<p>为了实现广度优先遍历，可以借助于具有FIFO特征的队列来实现。如下所示。</p>
+<ul>
+<li>建一个队列(先进先出)，把树的根节点压入队列。</li>
+<li>从队列中弹出一个节点(第一个弹出的就是根节点)，然后把改节点的左，右节点压入队列，如果没有子节点，则说明已经达到叶子节点了。</li>
+<li>用循环重复执行2步，知道队列为空。当队列为空时，说明所有的叶子节点(深度最深的层)都已经经过了队列，也就完成了遍历。</li>
+</ul>
+<h1 id="转换方法"><a href="#转换方法" class="headerlink" title="转换方法"></a>转换方法</h1><p>由于二叉树是一种更“确定”(它的每个节点最多只有两个子节点)的数据结构，因此不管是存储、增加、删除节点，还是遍历节点，程序都可以更简单、方便地实现口反之，由于树的每个节点具有个数不确定的节点，因此程序实现起来更复杂。</p>
+<p>为了充分利用二义树的简单易用性，可以将普通树转换为二叉树，以二叉树的形式来保存柞通树，当程序需要树时，再将悦义树转换为普通树。</p>
+<p>森林其实更简单，如果将一棵伶通树的根节点去掉，这棵树就变成了森林。或者可以转换一下思维，森林其实就是有多个根节点的树。</p>
+<h3 id="森林，树和二叉树的转换"><a href="#森林，树和二叉树的转换" class="headerlink" title="森林，树和二叉树的转换"></a>森林，树和二叉树的转换</h3><p>有序树，森林和二叉树之间有一一映射的关系，可以进行互相转换。</p>
+<p>多叉树向二叉树的方法如下：</p>
+<ul>
+<li>(1)加虚线：同一个父节点的相邻兄弟节点之间加虚线</li>
+<li>(2)抹实线：每个节点只保留它与最左子节点的连线，与其他字节点的连线都被抹掉。</li>
+<li>(3)虚改实:虚线改为实线</li>
+</ul>
+<p>如图就是多叉图向二叉树转换的结果<br><img src="http://upload-images.jianshu.io/upload_images/925576-c82309a11b8af4f9.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="forest_tree.PNG"></p>
+<p>图中的虚线就是新增的“父子”关系。这个转换结果来看，多叉树1转换为二叉树的方法的关键思想就是：所有子节点只保留子节点，其他子节点转为左子节点的右子节点链。</p>
+<p>按照这个转换思路，森林也可转换为二叉树————只要把森林当成一颗根节点被删除的多叉树即可。下图示范了将森林转换为二叉树的结果。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-867484f4272a891d.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="forest_to_tree.PNG"></p>
+<p>反过来，二叉树也可恢复出对应的多叉树，森林，恢复方法如下：</p>
+<p>-(1)加虚线：若某节点I是父节点的左子节点，则为该节点I的右孩子链的所有节点分别于节点I的父节点添加连线</p>
+<ul>
+<li>(2)抹线：把有虚线的节点于原父节点的连线抹去</li>
+<li>(3)整理：虚改实并按层排列</li>
+</ul>
+<p>把二叉树转换为多叉树</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-3fe2cf3e3dac86d4.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="two_tree_more_tree.PNG"></p>
+<p>如果二叉树的根节点有右子节点————右子节点就代表根节点的兄弟节点，这种情况会转换得到森林。</p>
+<p>把二叉树转换为森林</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-7567e4cdb591efc8.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="tree_to_forest.PNG"></p>
+<h3 id="树的链表存储"><a href="#树的链表存储" class="headerlink" title="树的链表存储"></a>树的链表存储</h3><p>根据上面介绍的理论，二义树可以和多叉树之间进行自由转换，因此可以得到普通树的另外一种保存方式:以二义树的形式保存多叉树，实际需要的时候再将二叉树转换为普通树。<br>至于到底以哪种方式来保存二叉树，完全是自由的。通常会选择使用三叉链表存储方式来保存二叉树，这样得到的二叉树操作起来更方便，进行二叉树和多叉树之间转换时也更方便。</p>
+<h1 id="哈夫曼树"><a href="#哈夫曼树" class="headerlink" title="哈夫曼树"></a>哈夫曼树</h1><p>哈夫曼树又被称为最优二叉树，是一种带权路径最短的二叉树。哈夫曼树是二叉树的一种应用，在信息检索中很常用.</p>
+<h3 id="哈夫曼树的定义和基本概念"><a href="#哈夫曼树的定义和基本概念" class="headerlink" title="哈夫曼树的定义和基本概念"></a>哈夫曼树的定义和基本概念</h3><p>在介绍哈夫曼树之前先来介绍一些相关的概念。</p>
+<ul>
+<li>节点之间的路径长度：从一个节点到另一个节点之间的分支数量称为两个节点之间的路径长度</li>
+<li>树的路径长度：从根节点到树中的每一个节点的路径长度之和。</li>
+</ul>
+<p>对于下图所示的而二叉树，该树的路径长度为17.即0+1+2+2+3+4+5==17.</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-a6d4fd9f200dc3cb.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="hafuman.PNG"></p>
+<ul>
+<li>节点的带权路径长度:从该节点到根节点之间的路径长度与节点的权的乘积</li>
+<li>树的带权路径长度：树中所有叶子节点的带权路径长度之和。带权路径如图：</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-84e31fdc4ea625af.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="daiquan.PNG"></p>
+<p>对于哈夫曼树，有一个很重要的定理:对于具有对n个叶子节点的哈夫曼树，一共需要2乘以n-1个节点。因为对于二叉树来说，有三种类型节点，即度数为2的节点、度数为1的节点和度数为0的叶子节点，而哈夫曼树的非叶子节点都是由两个节点合并产生的，所以不会出现度<br>数为1的节点。而生成的非叶子节点的个数为叶子节点个数-1因此n个叶子节点的哈夫曼树，一共需要Z乘以n-1个节点。</p>
+<h3 id="创建哈夫曼树"><a href="#创建哈夫曼树" class="headerlink" title="创建哈夫曼树"></a>创建哈夫曼树</h3><p>创建哈夫曼树，可以按如下步骤进行：</p>
+<ul>
+<li>根据给定的。个权值{wl,w2,…,wn}构造n棵二叉树的集合F={T1,T2,…,Tn} }，F集合中每棵二叉树都只有一个根节点。</li>
+<li>选取F集合中两棵根节点的权值最小的树作为左、右子树以构造一棵新的二叉树，且将新的二叉树的根节点的权值设为左、右子树上根节点的权值之和。</li>
+<li>将新的二叉树加入到F集合中，并删除第2步中被选中的两棵树。</li>
+<li>重复第2和3步，直到F集合中只剩下一棵树，这棵树就是哈夫曼树。</li>
+</ul>
+<p>下图显示了创建哈夫曼树的过程。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-10990d5f36284ddc.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="hafuman_tree.PNG"></p>
+<h3 id="哈夫曼编码"><a href="#哈夫曼编码" class="headerlink" title="哈夫曼编码"></a>哈夫曼编码</h3><p>根据哈夫曼树可以解决报文编码问题。假设需要对一个字符串如“a6cdabcaba”进行编码，将它转换为唯一的二进制码，但要求转换出来的二进制码的长度最小。</p>
+<p>假设每个字符在字符串中出现的频率为W}其编码长度为L，编码字符有n个，则编码后二进制码的总长度为W1L1+W2L2+W3L3+…+WnLn，这正好符合哈夫曼树的处理原则。因此可采用哈夫曼树的原理构造二进制编码，并使电文总长最短。</p>
+<p>对于“abcdabcaba”字符串，总共只有a,b,c,d,这四个字符，它们出现的次数是4,3,2,1次__这相当于它们的权值。于是，将a,b,c,d四个字符以出现的次数为权值构造哈夫曼树，得到如下图结构：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-134742dd24a606e3.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="hanfuman1.PNG"></p>
+<p>从哈夫曼树根节点开始，对左子树分配代码“0”，对右子树分配代码“1”，一直到达叶子节点。然后.将从树根沿每条路径到达叶子节点的代码排列起来，便得到了每个叶子节点的哈夫曼编码。下图显示了对a, b, c, d四个字符编码得到的哈夫曼编码。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-9b6f79a544b50bde.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="hanfuma2.PNG"></p>
+<h1 id="排序二叉树"><a href="#排序二叉树" class="headerlink" title="排序二叉树"></a>排序二叉树</h1><p>排序二叉树是一种特殊结构的二叉树，通过它可以非常方便地对树中的所有节点进行排序和检索</p>
+<p>排序二叉树要么是一颗空二叉树，要么是具有下列性质的二叉树</p>
+<ul>
+<li>若它的左子树不空，则左子树上所有的节点的值均小于它的根节点的值</li>
+<li>若它的右子树不空，则右子树上所有的节点均大于它的根节点的值</li>
+<li>它的左右子树分别为排序二叉树。</li>
+<li></li>
+</ul>
+<p>下图显示了一棵排序二叉树.<br>对于排序二叉树，若按中序遍历就可以得到由小到大的有序序列。中序遍历得:</p>
+<p>{2,3,4,8,9,9,10,13,15,18)</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-20518b7b7ccbda12.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="sort_tree.PNG"></p>
+<p>创建排序二义树的步骤，就是不断地向排序二义树添加节点的过程，几体如下。</p>
+<ul>
+<li>以根节点为当前节点开始搜索</li>
+<li>拿新节点的值和当前节点开始搜索</li>
+<li>如果新节点的值更大，则以当前的右子节点作为新的当前节点的右子节点作为新的当前节点;如果新节点的值更小，则以当前节点的右子节点作为新的当前节点。</li>
+<li>重复第2和3两个步骤，直到搜索到合适的叶子节点。</li>
+<li>将新节点添加为第4步找到的叶子节点的子节点，如果新节点更大，则添加为右子节点;否则,添加为左子节点。</li>
+</ul>
+<p>当程序从排序二叉树中删除一个节点之后，为了让它依然保持为排序哭叉树，必须对该排序二叉树进行维护。维护可分为如下几种情况。</p>
+<ul>
+<li>被删除节点是叶子节点，只需将它从其父节点中删除。</li>
+<li>被删除转点p只有左子树或只有右子树，如果p是它的父节点的左子节点，则将p的左子树或右子树添加成p一节点的父节点的左子节点即可;如果p是它的父节点的右子节点，则将p的左子树或右子树添加成P节点的父节点的右子节点即可。简单来说，如果要侧除的节点只有一个子节点，即可用它的子节点来代替要侧除的节点。</li>
+</ul>
+<p>被删除的节点只有左子树的情况<br><img src="http://upload-images.jianshu.io/upload_images/925576-df985421a46eb239.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="delete_only_left_tree.PNG"></p>
+<p>被删除节点只有右子树的情况<br><img src="http://upload-images.jianshu.io/upload_images/925576-92e4d960a6ab71c9.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="delete_only_right_tree.PNG"></p>
+<ul>
+<li><p>若被删除节点p的左、右子树均非空，则有以下两种做法。</p>
+</li>
+<li><p>将pL设为P的父节点q的左或右子节点(取决于P是其节父点q的左、右子节点)，<br>将pR设为P节点的中序前趋节点s的右子节点(s是pL最右下的节点，也就是pL子树中最大的节点)。采用这种方式删除节点的示意图如下：<br><img src="http://upload-images.jianshu.io/upload_images/925576-4e893fde50f8ed5f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="delete_left_right.PNG"></p>
+</li>
+</ul>
+<p>以P节点的中序前趋或后继替代P所指节点，然后从原排序二叉树中删除中序前趋或后继节点。简单来说，就是用大于p的最小节点或小于P的最大节点代替P节点点,采<br>用这种方式删除节点的示意图如下图：<br><img src="http://upload-images.jianshu.io/upload_images/925576-549aea8dc514b5e3.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="delete_left_right_center.PNG"></p>
+<h1 id="红黑树"><a href="#红黑树" class="headerlink" title="红黑树"></a>红黑树</h1><p>排序二叉树虽然可以快速检索，但在最坏的情况下，如果插入的节点集本身就是有序的，要么是由小到大排列，要么是由大到小排列，那么最后得到的排序二义树将变成链表:所有节点只有左节点(如果插入节点集合本身是由大到小排列的)，或者所有节点只有右节点(如果<br>插入节点集合本身是由小到大排列的)。在这种情况下，排序二叉树就变成了普通链表，其检索效率就会很低。</p>
+<p>为了改变排序二叉树存在的不足，对二叉树进行改进————红黑树，他将这种排序二叉树称为“对称二叉B树”。</p>
+<p>红黑树是一个更高效的检索二叉树，因此常常用来实现关联数组。典型的，JDK提供的集合类TreeMap本身就是一颗红黑树的实现。<br>红黑树在原有的排序二叉树上增加如下几个要求：</p>
+<ul>
+<li>性质l:每个节点要么是红色，要么是黑色。</li>
+<li>性质2:根节点永远是黑色的。</li>
+<li>除质3:所有的叶子节点都是空节点(即null)，并且是黑色的。</li>
+<li>性质4:每个红色节点的两个子节点都是黑色的。(从每个叶子到根的路径上不会有两个连续的红色节点。)</li>
+<li>性质5:从任一节点到其子树中每个叶子节点的路径都包含相同数量的黑色节点。</li>
+</ul>
+<p>java实现的红黑树结构如下图：<br><img src="http://upload-images.jianshu.io/upload_images/925576-dd44982397309363.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="red_black_tree.PNG"></p>
+<ul>
+<li><p>根据性质5，红黑树从根节点到每个叶子节点的路径都包含相同数量的黑色节点，因此从根节点到叶子节点的路径中包含的黑色节点数被称为树的“黑色高度(black-height)”.</p>
+</li>
+<li><p>性质4则保证了从根节点到叶子节点的最长路径的一长度不会超过任何其他路径的2倍。假如有一棵黑色高度为3的红黑树，从根节点到叶子节点的最短路径长度是2,该路径上全是黑色节点〔黑色节点-黑色节点-黑色节点)。最长路径也只可能为4,在每个黑色节点之间插入一个红色节点〔黑色节点-红色节点-黑色书点-红色节点-黑色节点)，性质4保证绝不可能插入更多的红色节点。由此可见，红黑树中最长的路径就是一条红黑交替的路径。</p>
+</li>
+</ul>
+<p>由此可以得出结论：对于给定的黑色高度为N的红黑树，从根到叶子节点的最短路径长度为N-1，最长路径长度为2*(N-1).</p>
+<p>红黑树通过上面这种限制来保证它大致是平衡的—因为红黑树的高度不会无限增高，这样能保证红黑树在最坏的情况下都是高效的，不会出现普通排序二叉树的情况。</p>
+<p>由于红黑树只是一棵特殊的排序二叉树，因此对红黑树上的只读操作与普通排序二叉树上的只读操作完全相同，只是红黑树保持了大致平衡，因此检索性能更好.</p>
+<p>但在红黑树上进行插入操作和删除操作会导致树不再符合红黑树的特征，因此插入操作和删除操作都需要进行一定的维护，以保证插入节点、删除节点后的树依然是红黑树。</p>
+<h3 id="插入操作"><a href="#插入操作" class="headerlink" title="插入操作"></a>插入操作</h3><p>插入操作按如下步骤进行:</p>
+<ul>
+<li>以排序二叉树的方法插入新节点，并将它设为红色。</li>
+<li>进行颜色调换和树旋转</li>
+</ul>
+<p>这种颜色调换和树旋转就比较复杂了，下面将分情况进行介绍。在介绍中，把新插入的节点定义为N节点，把N节点的父节点定义为P节点，把P节点的兄弟节点定义为U节点，把P节点的父节点定义为G节点。</p>
+<ol>
+<li>情形1：新节点N是树的根节点，没有父节点。</li>
+</ol>
+<p>在这种情形下，直接将它设置为黑色以满足性质2。</p>
+<ol>
+<li>情形2：新节点的父节点P是黑色的</li>
+</ol>
+<p>在这种情形下，新插入的节点是红色的，因此依然满足性质4。而且因为新节点N有两个黑色叶子节点，但是由于新节点N是红色的，通过它的每个子节点的路径依然保持相同的黑色节点数，因此依然满足性质5</p>
+<p>3.情形3：父节点P和父节点的兄弟节点U都是红色的</p>
+<p>在这种情形下，程序应该将P节点、U节点都设置为黑色，并将P节点的父节点设置为红色(用来保持性质5)。现在，新节点N有了一个黑色的父节点P。由于从P节点、U节点到根节点的任何路径都必须通过G节点，这些路径上的黑色节点数目没有改变(原来有叶子和G节点两个黑色节点，现在有叶子和P节点两个黑色节点)。</p>
+<p>经过上面处理后，红色的G节点的父节点也有可能是红色的，这就违反了性质4，因此还需要对G节点递归地进行整个过程〔把G节点当成新插入的节点进行处理)。<br>下图显示了处理过程：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-4968393f10fa7ac6.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="red_black_tree_1.PNG"></p>
+<ol>
+<li>情形4:父节点P是红色的，而其兄弟节点U是黑色的或缺少;且新节点N是父节点P的右子节点，而父节点P又是其父节点G的左子节点。</li>
+</ol>
+<p>在这种情形下，对新节点和其父节点进行一次左旋转。接着，按情形5处理以前的父节点P(也就是把P当成新插入的节点)。这将导致某些路径通过它们以前不通过的新节点N或父节点P其中之一，但是这两个节点都是红色的，因此不会影响性质5。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-8e20b07cb38b098b.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="red_black_tree_2.PNG"></p>
+<ol>
+<li>情形5:父节点F是红色的，而其兄弟节点U是黑色的或缺少:且新节点N是其父节点的左子节点，而父节点F父是其父节点G的左子节点。</li>
+</ol>
+<p>在这种情形下，需要对节点G进行一次右旋转口在旋转产生的树中，以前的父节点P现在是新节点N和节点G的父节点。由于以前的节点G是黑色的(否则父节点P就不可能是红色的)，切换以前的父节点P和节点G的颜色，使之满足性质4。性质5也仍然保持满足，因为通过这三个节点中任何一个的所有路径以前都通过节点G,现在它们都通过以前的父节点P。在各自的情形下，这都是三个节点中唯一的黑色节点。<br><img src="http://upload-images.jianshu.io/upload_images/925576-40aa67e720780c2c.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="red_black_tree_3.PNG"></p>
+<h3 id="删除操作"><a href="#删除操作" class="headerlink" title="删除操作"></a>删除操作</h3><p>红黑树的删除操作比插入操作要稍微复杂一些，实际上也可按如下步骤进行：</p>
+<ul>
+<li>以排序二叉树的方法删除指定节点。</li>
+<li>进行颜色调换和树旋转，使之满足红黑树特征。</li>
+</ul>
+]]></content>
+    
+    <summary type="html">
+    
+      树是一种非常常用的数据结构，树与前面介绍的线性表，栈，队列等线性结构不同，树是一种非线性结构
+    
+    </summary>
+    
+      <category term="Java" scheme="http://jack921.win/categories/Java/"/>
+    
+    
+      <category term="Java" scheme="http://jack921.win/tags/Java/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>疯狂java笔记之栈和队列</title>
+    <link href="http://jack921.win/2017/09/01/%E7%96%AF%E7%8B%82java%E7%AC%94%E8%AE%B0%E4%B9%8B%E6%A0%88%E5%92%8C%E9%98%9F%E5%88%97/"/>
+    <id>http://jack921.win/2017/09/01/疯狂java笔记之栈和队列/</id>
+    <published>2017-08-31T16:41:46.000Z</published>
+    <updated>2017-08-31T16:42:43.434Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h1><p>栈的英文单词是Stack,它代表一种特殊的线性表，这种线性表只能在固定一端（通常认为是线性表的尾端）进行插入，删除操作。</p>
+<h3 id="栈的基本定义"><a href="#栈的基本定义" class="headerlink" title="栈的基本定义"></a>栈的基本定义</h3><p>栈是一种数据结构，它代表只能在某一端进行插入，删除操作的特殊线性表，通常就是在线性表的尾端进行插入，删除操作。</p>
+<p>对于栈而言，允许进行插入，删除操作的一端被称为栈顶（top）,另一端咋被称为栈底（bottom）。</p>
+<p>对于一个栈不包含任何元素，那么这个栈就被称为空栈。<br>从栈顶插入一个元素被称为进栈，将一个元素从栈顶删除被称为“弹出栈”，对应的英文说法为pop,如下图:</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-c27e0aae2ae39653.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="stack.PNG"></p>
+<p>对于元素为a0,a1,a2,…,an-1的栈，假设栈中元素被a0,a1,a2,…,an-1的次序进栈，那么a0未栈底元素，an-1为栈顶元素。出栈时第一个弹出的元素应为栈顶元素，也就是an-1.也就是说，栈中元素的修改是按后进先出(LIFO)的原则进行的。</p>
+<p>归纳起来，可以再对栈下一个定义：栈就是一种后进先出(LIFO)的线性表。</p>
+<h3 id="栈的常用操作"><a href="#栈的常用操作" class="headerlink" title="栈的常用操作"></a>栈的常用操作</h3><p>栈是一种被限制过的线性表，通常不应该提供线性表中的如下方法：</p>
+<ul>
+<li>获取指定索引处的元素</li>
+<li>按值查找数据元素的位置</li>
+<li>向指定索引处插入数据元素</li>
+<li>删除指定元素索引处的数据元素<br>从上面这个方法可以看出，栈不应该提供从中间任意位置<br>访问元素的方法。也就是说，栈只允许在栈顶插入，删除元素。<br>栈的常用操作如下：</li>
+<li>初始化：通常是一个构造器，用于创建一个空栈</li>
+<li>返回栈的长度：该方法用于返回栈中数据元素的个数</li>
+<li>入栈：向栈的栈顶插入一个数据元素，栈的长度+1</li>
+<li>出栈：从栈的栈顶删除一个数据元素，栈的长度-1，该方法通常饭后被删除的元素</li>
+<li>访问栈顶元素：返回栈顶的数据元素，但不删除栈顶元素</li>
+<li>判断栈是否为空：改方法判断栈是否为空，如果栈为空则返回true,否则返回false.</li>
+<li>清空栈：将栈清空</li>
+</ul>
+<p>类似于线性表即采用顺序存储的方式来实现，也可以用链式结构来实现，也可使用链式结构来实现，栈同样即可采用顺序结构来存储栈内的元素，也可采用链式结构来存储栈内元素。</p>
+<h3 id="栈的顺序存储结构及实现"><a href="#栈的顺序存储结构及实现" class="headerlink" title="栈的顺序存储结构及实现"></a>栈的顺序存储结构及实现</h3><p>顺序存储结构的栈简称为顺序栈，它利用一组地址连续的存储单元依次存放从栈底到栈顶的数据元素。栈底位置固定不变，它的栈顶可以直接通过顺序栈底层数组的数组元素arr[size-1]来访问。顺序栈的存储示意图如下图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-76ff60663c8006a7.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="stack_sort.PNG"></p>
+<p>顺序栈中数据元素的物理关系和逻辑关系是一致的，先进栈的元素位于栈底，栈底元素的存储位置相对也比较小。</p>
+<h4 id="1-进栈"><a href="#1-进栈" class="headerlink" title="1.进栈"></a>1.进栈</h4><p>对于顺序栈的进栈操作而言，只需将新的数据元素存入栈内，然后让记录栈内元素个数的变量加1，程序即可再次通过arr[size-1]重新访问新的栈顶元素。进栈操作示意图如下：<br><img src="http://upload-images.jianshu.io/upload_images/925576-0f3db7989bb989f5.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="inti_stack.PNG"></p>
+<p>由于顺序栈底层通常会采用数组来保存数据元素，因此可能出现的情况是：当程序试图让一个数据元素进栈时，底层数据已满，那么就必须扩充底层数组的长度来容纳新进栈的数据元素。</p>
+<h4 id="1-出栈"><a href="#1-出栈" class="headerlink" title="1.出栈"></a>1.出栈</h4><p>对于顺序栈的出栈操作而言，需要将栈顶元素弹出栈，程序要做两件事。</p>
+<ul>
+<li>让记录栈内元素个数的变量减1.</li>
+<li>释放数组对栈顶元素的引用。</li>
+</ul>
+<p>出栈操作示意图如下图:<br><img src="http://upload-images.jianshu.io/upload_images/925576-2c51bab9b963cdbf.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="out_stack.PNG"></p>
+<p>对于删除操作来说，只要让记录栈内元素个数的size减1，程序即可通过arr[size-1]访问到新的栈顶元素。但不要忘记释放原来栈顶的数组引用，否则会引起内存泄漏。</p>
+<p>栈比普通线性表的功能更弱，栈时一种被限制过的线性表，只能从栈顶插入，删除数据元素。</p>
+<h3 id="栈的链式存储结构及实现"><a href="#栈的链式存储结构及实现" class="headerlink" title="栈的链式存储结构及实现"></a>栈的链式存储结构及实现</h3><p>程序可以采用单链表来保存栈中所有元素，这种链式结构的栈也被称为栈链。对于栈链而言，栈顶元素不断地改变，程序只要使用一个top引用来记录当前的栈顶元素即可。top引用变量永远引用栈顶元素，再使用一个size变量记录当前栈中包含多少个元素即可。如下图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-5e7b7d441ee96051.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="linked_stack.PNG"></p>
+<h4 id="1-进栈-1"><a href="#1-进栈-1" class="headerlink" title="1.进栈"></a>1.进栈</h4><p>对于栈链的进栈操作，程序只需要做如下两件事：<br>-让top引用指向新元素添加的元素，新元素的next引用指向原来的栈顶元素。</p>
+<ul>
+<li>让记录栈内元素个数的size变量加1.<br>进栈操作示意图如下：</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-8330e7b207ce7a2f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="into_linked_stack.PNG"></p>
+<h4 id="2-出栈"><a href="#2-出栈" class="headerlink" title="2.出栈"></a>2.出栈</h4><p>对于链栈的出栈操作，需要将栈顶元素弹出栈，程序需要做两件事情：</p>
+<ul>
+<li>让top引用指向原栈顶元素的下一个元素，并释放原来的栈顶元素</li>
+<li>让记录栈内元素个数的size变量减1.</li>
+</ul>
+<p>出栈操作示意图如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-91458e48e570a9b3.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="out_linked_stack.PNG"></p>
+<p>对于顺序栈来说，程序开始就需要在底层为他开辟一块连续的内存（数组）,这个空间浪费其实很大.从空间利用率的角度说，链栈的空间利用率比顺序栈的空间利用率要高一些。</p>
+<h3 id="java集合中的栈"><a href="#java集合中的栈" class="headerlink" title="java集合中的栈"></a>java集合中的栈</h3><p>Java集合实际上提供两种栈供开发者使用：</p>
+<ul>
+<li>java.util.Stack:它就是一个最普通的顺序栈，底层数据实现。这个Stick类是线程安全的，在多线程环境下也可以放心使用</li>
+<li>java.util.LinkedList:LinkedList是一个双端链表：除此之外。LinkedList还可作为栈使用，查看该类api将会发现，他同样提供了push(),pop(),peek()等方法，这表明LinkedList其实还可以当成栈使用。LinkedList代表栈的链式实现，但它是线程不安全的，如果需要在多线程环境下使用，则应该使用Collections类的工具发将其“改造”成线程安全的类。</li>
+</ul>
+<h1 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h1><h3 id="队列的基本定义"><a href="#队列的基本定义" class="headerlink" title="队列的基本定义"></a>队列的基本定义</h3><p>队列是一种特殊的线性表，他只允许在表的前端(front)进行删除操作，只允许在表的后端（rear）进行插入操作，进行插入操作的端称为队尾，进行删除的端称为对头。</p>
+<p>如果队列中不包含任何元素，该队列就被称为空队列。</p>
+<p>对于一个队列来说，每个元素总是从队列的rear端进入队列，然后等待该与元素之前的所有元素出对之后，当前元素才能出对。因此，把队列简称为先进先出（FIFO）的线性表。如下图：<br><img src="http://upload-images.jianshu.io/upload_images/925576-26b83f3ee1284071.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="queue.PNG"></p>
+<h3 id="队列的常用操作"><a href="#队列的常用操作" class="headerlink" title="队列的常用操作"></a>队列的常用操作</h3><p>队列同时是一种被限制过的线性表，通常不应该提供线性表中的如下方法：</p>
+<ul>
+<li>获取指定索引处的元素</li>
+<li>按值查找数据元素的位置</li>
+<li>向指定索引处插入数据元素</li>
+<li>删除指定索引处的数据元素<br>从上面这些方法可以看出，队列不应该提供从中间任意位置访问元素的方法，也就是说，队列只允许在队列的前端（front）删除元素，只允许在队列的后端（rear）插入元素。<br>队列的常用操作如下：</li>
+<li>初始化:通常是一个构造器，用于创建一个空队列</li>
+<li>返回队列的长度:该方法用十返回队列中数据元素的个数。</li>
+<li>加入元索:向队列的rear端插入一个数据元素，队列的长度+1</li>
+<li>删除元素:从队列的front端删除一个数据元素，队列的长度-1，该方法通常返回被删除的元素。</li>
+<li>访问队列的前端元素:返回队列的front端的数据元素，但不删除该元素。</li>
+<li>判断队列是否为空:该方法判断队列是否为空，如果队列为空则返回true否则返回false</li>
+<li>清空队列：将队列清空</li>
+</ul>
+<p>类似于线性表既可采用顺序存储的方式来实现，也可采用链式结构来卖现，队列同样既可采用顺序结构来存储队列元素，也可采用链式结构来存储队列元素。</p>
+<h3 id="队列的顺序存储结构及实现"><a href="#队列的顺序存储结构及实现" class="headerlink" title="队列的顺序存储结构及实现"></a>队列的顺序存储结构及实现</h3><p>系统采用一组地址连续的存储单元依次存放队列从rear端到front端的所有数据元素，程序只需(front和rear两个整型变量来记录队列front端的元素索引、rear端的元素索引。示意图如下：<br><img src="http://upload-images.jianshu.io/upload_images/925576-a71c139f7e2501a3.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="queue_sort.PNG"></p>
+<p>顺序队列可能会造成假满的问题，程序有如下解决方：</p>
+<ul>
+<li>每次将元素移除队列时将队列中的所有元素向front端移动一位，这种方式front值永远为0，有元素插入队列时rear值+1，有元素移除队列时rear值-1,。但这种方式非常浪费时间，因为每次将元素从队列移除都需要进行“整体搬家”。</li>
+<li>将数组存储区看成一个首尾相接的环形区域，当存放数组的最大地址之后，rear值再次变为0。采用这种技巧存储的队列称为循环队列。</li>
+</ul>
+<h3 id="循环队列"><a href="#循环队列" class="headerlink" title="循环队列"></a>循环队列</h3><p>为了重新利用循环顺序队列底层数组中已删除元素所占用的空间，消除可能出现的“假满”现象，可以将顺序队列改进为循环队列。</p>
+<p>循环队列是首尾相连的队列：当front,rear变量值达到底层数组的capacity-1之后，再前进一位就自定变成0,。示意图如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-668e70ff5c324f78.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="circulation.PNG"></p>
+<p>不管队列是空还是满，都会出现一个情况：front==rear.如果底层数据中elementData[front]==null,则表明此时队列为空，否则表明该队列已满。</p>
+<h3 id="队列的链式存储结构及实现"><a href="#队列的链式存储结构及实现" class="headerlink" title="队列的链式存储结构及实现"></a>队列的链式存储结构及实现</h3><p>使用链式结构保存线性表，也可以采用链式结构来存储队列的各元素，采用链式存储结构的队列也被称为链队列。</p>
+<p>对于链队列而言，由于程序需要从rear端添加元素，然后从front端移除元素，因此考虑对链队列增加front,rear两个引用变量，使他们分别执行链队列的头，尾两个节点。链队列示意图如下：<br><img src="http://upload-images.jianshu.io/upload_images/925576-ab5898a93da017e8.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="queue_llinked.PNG"><br>由于链队列采用链式结构类保存队列中所有元素，该队列允许添加无限多个数据元素，因此链队列无队列满的问题。</p>
+<h4 id="1-插入队列"><a href="#1-插入队列" class="headerlink" title="1.插入队列"></a>1.插入队列</h4><p>对于链队列而言，插入操作的实现非常简单，只要创建一个新节点，让原rear节点的next引用指向新的节点，再让rear引用指向该新节点即可。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-46e380c956f2ed9e.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="queue_linked_insert.PNG"></p>
+<h4 id="2-移除队列"><a href="#2-移除队列" class="headerlink" title="2.移除队列"></a>2.移除队列</h4><p>对于链队列而言，移除操作的实现也非常简单，只要让front引用指向原front所引用节点的下一个节点即可。当然，不要忘记释放原front节点的引用。示意图如下:<br><img src="http://upload-images.jianshu.io/upload_images/925576-1d1624ad979be640.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="queue_linked_delete.PNG"></p>
+<h3 id="Java集合中的队列"><a href="#Java集合中的队列" class="headerlink" title="Java集合中的队列"></a>Java集合中的队列</h3><p>从JDK1.5开始,java的集合框架中提供了一个queue接口，该接口代表了一个队列，实现该接口的类可以当成队列使用。Queue里包含了6个方法，用于代表队列包含的3个标志性的方法，如下所示：</p>
+<ul>
+<li>插入：在队列的rear端插入元素</li>
+<li>移除：在队列的front端删除元素</li>
+<li>访问：访问队列的front端元素</li>
+</ul>
+<p>Java为上面的每个方法方法提供了两个版本：具有特殊返回值的版本和抛出异常的版本，这样就产生了6个方法。</p>
+<table>
+<thead>
+<tr>
+<th>版本</th>
+<th>抛出异常的版本</th>
+<th>具有特殊返回值的版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>插入</td>
+<td>add(e)</td>
+<td>offer(e)</td>
+</tr>
+<tr>
+<td>移除</td>
+<td>remove()</td>
+<td>poll()</td>
+</tr>
+<tr>
+<td>访问</td>
+<td>element()</td>
+<td>peek()</td>
+</tr>
+</tbody>
+</table>
+<h1 id="双端队列"><a href="#双端队列" class="headerlink" title="双端队列"></a>双端队列</h1><p>双端队列代表一种特殊的队列，它可以在两端同时进行插入，删除操作，如下图所示：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-b0712d11453db45f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="double_queue.PNG"></p>
+<p>对于双端队列，由于它可以从两端分别进入插入，删除操作，如果程序将所有的插入，删除操作固定在一端进行，这个双端队列就变成前面介绍的栈，由此可见，Deque和Queue，Stack之间的关系如图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-c0e8301c4e548f8f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="double_queue_relation.PNG"></p>
+<p>双端队列（Deque）既可说是Queue的子接口，也可说Stack(JDK并未提供这个接口)的子接口。因此。Deque即可当成队列使用，也可当成栈使用。</p>
+<p>由此可见，Deque其实就是Queue和Stack混合而成的一种特殊的线性表，完全可以参考起前面的Queue,Stack的实现类实现Deque。</p>
+<p>JDK为Deque提供了ArrayDeque和LinkedList两个常见的实现类。其中，ArrayDeque代表顺序存储结构的双端队列，LinkedList则代表链式存储结构的双端队列。</p>
+<p>LinkedList代表一种双向，链式存储结构的循环线性表，这里有提到LinkedList代表线程安全的，链式结构的双端队列，由此可见，LinkedList实在是一个功能非常强大的集合类。事实上，LinkedList几乎是Java集合框架中方法最多的类。<br><img src="http://upload-images.jianshu.io/upload_images/925576-9539da99ea52511b.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="LinkedList_relation.PNG"></p>
+<p>虽然LinkedList工具类的功能非常强大，它既可当成线性表使用，也可当成栈使用，还可当成队列使用，但对大部分程序而言，使用ArrayList，ArrayDeque的性能比LinkedList更好。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      栈的英文单词是Stack,它代表一种特殊的线性表，这种线性表只能在固定一端（通常认为是线性表的尾端）进行插入，删除操作。
+    
+    </summary>
+    
+      <category term="Java" scheme="http://jack921.win/categories/Java/"/>
+    
+    
+      <category term="Java" scheme="http://jack921.win/tags/Java/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>疯狂java笔记之线性表</title>
+    <link href="http://jack921.win/2017/09/01/%E7%96%AF%E7%8B%82java%E7%AC%94%E8%AE%B0%E4%B9%8B%E7%BA%BF%E6%80%A7%E8%A1%A8/"/>
+    <id>http://jack921.win/2017/09/01/疯狂java笔记之线性表/</id>
+    <published>2017-08-31T16:40:23.000Z</published>
+    <updated>2017-08-31T16:41:35.087Z</updated>
+    
+    <content type="html"><![CDATA[<p>从数据的逻辑结构来分，数据元素之间存在的关联关系被称为数据的逻辑结构。归纳起来，应用程序中的数据大致哟如下四种基本的逻辑结构。</p>
+<ul>
+<li>集合：数据元素之间只有“同属于一个集合”的关系</li>
+<li>线性结构：数据元素之间存在一个对一个的关系</li>
+<li>树形结构：数据元素之间存在一个对多个的关系</li>
+<li>图状结构或网状结构：数据元素之间存在多个对多个关系<br>对于数据不同的逻辑结构，在底层通常有两种物理存储结构。</li>
+<li>顺序存储结构</li>
+<li>链式存储结构</li>
+</ul>
+<h1 id="线性表的定义及逻辑结构"><a href="#线性表的定义及逻辑结构" class="headerlink" title="线性表的定义及逻辑结构"></a>线性表的定义及逻辑结构</h1><p>线性表（LinearList）是由n(n&gt;=0)个数据元素(节点)a1,a2,a3,…,an组成的有限序列。</p>
+<p>线性表中每个元素必须具有相同的结构(即拥有相同的数据项).线性表是线性结构中最常用而又最简单的一种数据结构。</p>
+<p>线性表中每个数据元素其实可以包含若千个数据项，例如，使用ai来代表线性表中的第i个元素，其中ai元素可以包含若千个数据项。关干线性表还可以有如下定义。</p>
+<ul>
+<li>线性表中包含的数据元素个数n被称为表的长度，当线性表的长度为0是该表也被称为空表。</li>
+<li>当n&gt;0时，表可以表示为(a1,a2,a3,…,an)</li>
+</ul>
+<p>对于一个非空，有限的线性表而言，它总具有如下特征。</p>
+<ul>
+<li>总存在唯一的“第一个”数据元素。</li>
+<li>总存在唯一的“最后一个”数据元素。</li>
+<li>除第一个数据元素外，集合中的每一个数据元素都只有一个前驱的数据元素。</li>
+<li>除了最后一个数据元素外，集合中的每个数据元素都只有一个后继的数据元素。</li>
+</ul>
+<h3 id="线性表的基本操作"><a href="#线性表的基本操作" class="headerlink" title="线性表的基本操作"></a>线性表的基本操作</h3><p>如果需要实现一个线性表，程序首先需要确定该线性表的每个数据元素。接下来，应该为该线性表实现如下基本操作。</p>
+<ul>
+<li>初始化：通常是一个构造器，用于创建一个空的线性表</li>
+<li>返回线性表的长度：该方法用于返回线性表中的数据元素</li>
+<li>获取指定索引处的元素:根据索引返回线性表的数据元素</li>
+<li>按值查找数据元素的位置：如果线性表中存在一个或多个与查找值相等的数据元素，那么该方法返回一个搜索到的值相等的数据元素的索引，否则返回-1.</li>
+<li>直接插入数据元素：向线性表的头部插入一个数据元素，线性表长度+1；</li>
+<li>向指定位置插入数据元素:向线性表的指定索引处插入一个数据元素，线性表长度+1.</li>
+<li>直接删除数据元素：删除线性表头部的数据元素，线性表长度-1.</li>
+<li>删除线性表中指定位置的数据元素：删除线性表中指定索引处的数据元素，线性表长度-1.</li>
+<li>判断线性表是否为空：该方法判断线性表是否为空，如果线性表为空，则返回true,否则返回false</li>
+<li>清空线性表：将线性表清空<h1 id="顺序存储结构"><a href="#顺序存储结构" class="headerlink" title="顺序存储结构"></a>顺序存储结构</h1>线性表的顺序存储结构是指用一组地址连续的存储单元依次存放线性表的元素。当程序采用顺序存储结构来实现线性表时，线性表中相邻元素的两个元素ai和ai+1对应的存储地址loc(ai)和loc(ai+1)也是相邻的。</li>
+</ul>
+<p>换句话说，顺序结构线性表中数据元素的物理关系和逻辑关系是一致的，线性表中数据元素的存储地址可按如下公式计算。</p>
+<p>loc(ai)=loc(a0)+i*b(0&lt;i&lt;n) </p>
+<p>上面公式中b代表每个数据元素的存储单元。从上面公式可以看出，程序获取线性表中每个元素的存储起始地址的时间相同，读取表中数据元素的时间也相同。而且顺序表中每个元素都可随机存取，因此顺序存储的线性表时一种随机存取的存储结构。</p>
+<p>为了使用顺序结构实现线性表，程序通常会采用数组来保存线性表中的数据元素。</p>
+<p>线性表的插入运算是指表的第i(0&lt;=i&lt;n)个位置插入一个新的数据元素x,是长度为n的线性表：</p>
+<p>a0,…,ai-1,ai,…,an-1</p>
+<p>变成长度为n+1的线性表：</p>
+<p>a0,…,ai-1,x,ai,…,an-1<br>向顺序结构的线性表插入元素，如图所示：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-8bbd16422ea595bb.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="linear.PNG"></p>
+<p>这里有一个要考虑的问题。由于顺序结构线性表底层采用数组来存储数据元素，因此插入数据元素是必须保证不会超出底层属猪的容量。如果线性表中元素的个数超出了底层数据的长度，那么就必须为该线性表扩充底层数据的长度。</p>
+<p>线性表的删除运算是指将表的第i(0&lt;=i&lt;n)个位置的数据元素删除，使长度为n的线性表：</p>
+<p>a0,…,ai-1,ai,ai+1,…,an-1</p>
+<p>变成长度为n-1的线性表：</p>
+<p>a0,…,ai-1,ai+1,…,an-1</p>
+<p>从顺序结构的线性表中删除元素，如下图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-80ab6d562d19e61a.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="linear2.PNG"></p>
+<h1 id="链式存储结构"><a href="#链式存储结构" class="headerlink" title="链式存储结构"></a>链式存储结构</h1><p>链式存储结构的线性表（简称为链表）将采用一组地址任意的存储单元存放线性表中的数据元素。链式存储结构的线性表不会按线性的逻辑顺序来保存数据元素，他需要在每个数据元素里保存一个引用下一个数据元素的引用（或者叫指针）。</p>
+<p>由于不是必须按顺序存储，链表在插入，删除数据元素时比顺序线性表块的多，当时查找一个节点或者访问特点节点编号的节点则比顺序线性表慢得多。</p>
+<p>使用链表结构可以克服顺序线性表(基于数组)需要预先知道数据大小的缺点，链表结构可以充分利用计算机的内存空间，实现灵活的内存动态管理。但是链表结构失去了数组随机存取的优点，同时链表由于增加了节点的指针域，空间开销比较大。</p>
+<p>对于链表存储结构的线性表而言，它的每个节点都必须包含数据元素本身和一个或两个用来引用上一个/下一个节点的引用。也就是说，有如下公式：</p>
+<p>节点=数据元素+引用下一个节点的引用+引用上一个节点的引用</p>
+<p>如下图是双向链表节点示意图，其中每个节点中的prev代表前一个节点的引用，只有双向链表的节点才存在prev引用。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-4be39139792e678f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="enty.PNG"></p>
+<p>链表是多个相互引用的节点的集合，这个链表总是从头节点开始，然后依次向后指向每个节点。</p>
+<p>空链表就是头节点为null的链表</p>
+<h3 id="单链表上的基本运算"><a href="#单链表上的基本运算" class="headerlink" title="单链表上的基本运算"></a>单链表上的基本运算</h3><p>单链表指定是每个节点保留一个引用，改引用指向当前节点的下一个节点，没有引用指向头节点，尾节点的next引用为null.单链表示意图如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-f1e478a37050ea6c.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="one_linked.PNG"></p>
+<p>对于单链表，系统建立单链表的过程就是不断添加节点的过程。动态添加单链表有以下两种方式。</p>
+<ul>
+<li>头插法建表：该方法从一个空表开始，不断地创建新节点，将数据元素存入节点的data域中，然后不断地以新节点为头节点，让新节点指向原有的头节点</li>
+<li>尾插法建表：该方法是将新节点插入到当前链表的表尾上，因此需要为链表定义一个引用变量来保存链表的最后一个节点。</li>
+</ul>
+<p>头插法建立链表虽然算法简单，但生成的链表中节点的次序和输入的顺序相反:若希望二者次序一致，则应该采用尾插法来建立链表。</p>
+<p>对于单链表而言，常用的操作有：</p>
+<ol>
+<li>查找</li>
+<li>插入</li>
+<li>删除</li>
+</ol>
+<h4 id="1-查找操作"><a href="#1-查找操作" class="headerlink" title="1.查找操作"></a>1.查找操作</h4><p>单链表的查找操作可以分为以下两种：</p>
+<ul>
+<li><p>按序号查找第index个节点:从header节点依次向下在单链表中查找第index个节点口算法为，设header为头，current为当前节点(初始时current从heade，开始)，0为头节点序号，i为计数器，则可使current依次下移寻找节点，并使i同时递增记录节点序号，直到返回指定节点。</p>
+</li>
+<li><p>在链表中查找指定的element元素:查找是否有等于给定值element的节点。若有，则返回首次找到的其值为element的节点的索引;否则，返回-l。查找过程从开始节点出发，顺着链表逐个将节点的值和给定值element做比较。</p>
+</li>
+</ul>
+<h4 id="2-插入操作"><a href="#2-插入操作" class="headerlink" title="2.插入操作"></a>2.插入操作</h4><p>插入操作时将值为element的新节点插入到链表的第index个节点的位置上。因此，首先找到索引的index-1的节点，然后生成一个数据域为element的新节点newNode，并令idnex-1处节点的next引用新节点，新节点的next引用原来index处的节点。</p>
+<p>向i索引处插入节点的示意图。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-96d3cffe698e51f1.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="insert_linked.PNG"></p>
+<h4 id="3-删除操作"><a href="#3-删除操作" class="headerlink" title="3.删除操作"></a>3.删除操作</h4><p>删除操作是将链表的第index个节点删去。因为在单链表中，第index个节点是有index-1处的节点引用的，因此删除index处节点将先获取index-1处节点，然后index-1处节点的next引用到原index+1处的节点，并释放index处节点即可。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-91dcfa90c9a34469.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="delete_linked.PNG"></p>
+<h3 id="循环链表"><a href="#循环链表" class="headerlink" title="循环链表"></a>循环链表</h3><p>循环链表是一种首尾相接的链表。将单链表的尾节点next指针改为引用单链表header节点，这个单链表就成了循环链表。</p>
+<p>循环链表具有一个显著特征：链表的任一个节点出发均可找到表中的其他所有节点，因此，循环链表可以被视为“无头无尾”,如下图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-aff754dfb418c87a.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="recycler_linked.PNG"></p>
+<p>循环链表中的第一个节点之前就是最后一个节点，反之亦然。循环链表的无边界使得它实现了很多方法时会更容易，在这样的链表上设计算法会比普通链表更加容易。</p>
+<p>新加入的节点应该是在第一个节点之前（采用头插法插入），还是最后一个节点之后（采用尾插法插入），可以根据实际要求灵活处理，具体的实现区别不大。</p>
+<h1 id="双向链表"><a href="#双向链表" class="headerlink" title="双向链表"></a>双向链表</h1><p>如果为每个节点保留两个引用prev和next,让prev指向当前节点的上一个节点，让next指向当前节点的下一页节点，此时的链表既可以向后依次访问每个节点，也可以向前依次访问节点，这种形式的链表被称为双向链表。示意图如下：<br><img src="http://upload-images.jianshu.io/upload_images/925576-120a0ab2df4de6e9.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="double_linked.PNG"><br>双向链表是一种对称结构，它克服了单链表上指针单向性的缺点，其中每个节点既可以向前引用，也可以向后引用，这样可以更方便地插入、删除数据元素。</p>
+<p>与单链表类似的是，如果将链表的header节点与tail节点链在一起就构成了双向循环链表。</p>
+<h3 id="双向链表的查找"><a href="#双向链表的查找" class="headerlink" title="双向链表的查找"></a>双向链表的查找</h3><p>由于双向链表既可以从header节点开始依次向后搜索每个节点，也可以从tail节点开始依次向前搜索每个节点，因此当程序试图从双向链表中搜索指定索引处的节点时，既可以从该链表的header节点开始搜索，也可以从该链表的tail节点开始搜索。至于到底应该从header开<br>始搜索，还是应该从tail开始搜索，则取决于被搜索节点是更靠近header，还是更靠近tail.</p>
+<p>一般来说，可以通过被搜索index的值来判断它更靠近header还是更靠近tail.如果index&lt;size/2，则可判断该位置更靠近header，应从header开始搜索;反之，则可判断该位置更靠近tail，那就应从tail开始搜索口</p>
+<h3 id="双向链表的插入"><a href="#双向链表的插入" class="headerlink" title="双向链表的插入"></a>双向链表的插入</h3><p>双向链表的插入操作更复杂，向双向链表中插入一个新节点必须同时修改两个方向的指针（即引用）。如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/925576-68a3dfab7295f237.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="insert_double_linked.PNG"></p>
+<h3 id="双向链表的删除"><a href="#双向链表的删除" class="headerlink" title="双向链表的删除"></a>双向链表的删除</h3><p>在双向链表中，删除一个节点需要同时修改两个方向的指针，双向链表中删除节点的操作，如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/925576-707bee4a1f56b189.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="delete_double_linked.PNG"></p>
+<h1 id="线性表的分析"><a href="#线性表的分析" class="headerlink" title="线性表的分析"></a>线性表的分析</h1><p>线性表的顺序的顺序和链式两种实现各有优势：如下</p>
+<table>
+<thead>
+<tr>
+<th>分析比较</th>
+<th>顺序表</th>
+<th>链表</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>空间性能</td>
+<td>顺序表的存储空间是有静态分布的，因此需要一个长度固定的数组，因此总有部分数组元素被浪费</td>
+<td>链表的存储空间是动态分布的，因此空间不会被浪费。但由于链表需要额外的空间来为每个节点保存指针</td>
+</tr>
+<tr>
+<td>时间性能</td>
+<td>顺序表中元素的逻辑顺序与物理存储顺序保持一致，而且支持随机存取，因此顺序在查找，读取性能很好</td>
+<td>链表采用链式结构来保存表内元素，因此在插入，删除元素时性能较好</td>
+</tr>
+</tbody>
+</table>
+<h3 id="线性表的功能"><a href="#线性表的功能" class="headerlink" title="线性表的功能"></a>线性表的功能</h3><p>线性的本质上是一个充当容器的工具类，当程序有一组结构相同的数据元素需要保存时，就可以考虑使用线性表来保存它们。</p>
+<p>从某种程度来说，线性表是数组的加强，线性表比数据多了如下几个功能：</p>
+<ul>
+<li>线性表的长度可以动态改变，而java数组的长度是固定的<br>-线性表可以插入元素，而数组无法插入元素</li>
+<li>线性表可以删除元素，而数组无法删除元素，数组只能将指定元素赋为null,但各种元素依然存在</li>
+<li>线性表提供方法来搜索指定元素的位置，而数组一般不提供该方法</li>
+<li>线性表提供方法来清空所有元素的位置，而数组一般不提供该方法</li>
+</ul>
+<p>从上面线性表的实现能发珑线性表比数组功能强大的理由是，顺序结构的线性表可以说是包装过的数组，自然会提供更多额外的方法来简化操作。</p>
+<p>对于大部分,Java程序员来说，其实经常在使用线性表List. Java的List接口就代表了线性表，线性表的两种实现分别是ArrayList和LinkedList其中LinkedList还是一个双向链表。JDK提供的线性表有如下图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-5d9cb3db4508aa0c.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="listtype.PNG"></p>
+]]></content>
+    
+    <summary type="html">
+    
+      从数据的逻辑结构来分，数据元素之间存在的关联关系被称为数据的逻辑结构。归纳起来，应用程序中的数据大致哟如下四种基本的逻辑结构。
+    
+    </summary>
+    
+      <category term="Java" scheme="http://jack921.win/categories/Java/"/>
+    
+    
+      <category term="Java" scheme="http://jack921.win/tags/Java/"/>
+    
+  </entry>
+  
+  <entry>
+    <title>疯狂Java笔记之面向对象的陷阱</title>
+    <link href="http://jack921.win/2017/09/01/%E7%96%AF%E7%8B%82Java%E7%AC%94%E8%AE%B0%E4%B9%8B%E9%9D%A2%E5%90%91%E5%AF%B9%E8%B1%A1%E7%9A%84%E9%99%B7%E9%98%B1/"/>
+    <id>http://jack921.win/2017/09/01/疯狂Java笔记之面向对象的陷阱/</id>
+    <published>2017-08-31T16:38:52.000Z</published>
+    <updated>2017-08-31T16:40:09.846Z</updated>
+    
+    <content type="html"><![CDATA[<h1 id="instanceof运算符的陷阱"><a href="#instanceof运算符的陷阱" class="headerlink" title="instanceof运算符的陷阱"></a>instanceof运算符的陷阱</h1><p>instanceof是一个非常简单的运算符。instanceof运算符的前一个操作数通常是一个引用类型的变量，后一个操作数通常是一个类(也可以是接口，可以把接口理解成一个特殊的类)，他用于判断前面的对象是否是后面的类或其子类，实现类的实例。如果是，则返回true,否则，返回false.</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">String obj=&quot;Java&quot;;</div><div class="line">obj instanceof Math</div></pre></td></tr></table></figure>
+<p>上面程序是无法编译通过的，根据Java语言规范，使用instanceof运算符有一个限制：instanceof运算符前面操作数的编译时类型必须是如下三种情况。</p>
+<ul>
+<li>要么与后面的类相同</li>
+<li>要么与后面类的父类</li>
+<li>要么是后面类的子类</li>
+</ul>
+<p>如果前面操作数的编译时类型与后面的类型没有任何关系，程序将没法用过编译。因此，当使用instanceof运算符的时候，应尽量从编译，运行两个阶段来考虑它————如果instanceof运算符使用不当，程序编译时就会抛出异常；当使用instanceof运算符用过编译后，才能考虑它的运算结果是true,还是false.</p>
+<p>在极端情况下，instanceof前一个操作数所引用对象的实际类型就是后面的类型，但只要它的编译时类型既不是第二个操作数的类型， 也不是第二个操作数的父类，子类程序就没法通过编译。如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div></pre></td><td class="code"><pre><div class="line">Object str=&quot;java&quot;;</div><div class="line">Math math=(Math)str;</div><div class="line">System.out.println(&quot;字符串是否是String的实例：&quot;+(math instanceof String));()</div></pre></td></tr></table></figure>
+<p>当编译器编译java程序时，编译器无法检查引用变量实际引用对象的类型，他只检查该变量的编译时类型。最后一句代码math的编译时类型是Math,Math既不是String类型，也不是String类型的父类，还不是String类型的子类，因此程序没法通过编译。至于math实际引用对象的类型是什么，编译器也不关心，编译阶段也没法关心。</p>
+<p>至于第二行代码为何没有出现编译错误，这和强制转型机制有关。对于Java的强制转型而言，也可以分为编译，运行两个阶段来分析它。</p>
+<ul>
+<li>在编译阶段，强制转型要求被转型变量的编译时类型必须是如下三种情况之一.</li>
+</ul>
+<ol>
+<li>被转型变量的编译时类型与目标类型相同。</li>
+<li>被转型变量的编译时类型是目标类型父类。</li>
+<li>被转型变量的编译时类型是目标类型子类。在这个情况下可以自动向上转型，无须强制转换。<br>如果被转型变量的编译时类型与目标类型没有任何继承关系，编译器将提示编译错误。通过上面分析可以看出，强制转型的编译阶段只关心引用变量的编译时类型，至于该引用变量实际引用对象的类型，编译器并不关心，也没法关心。</li>
+</ol>
+<ul>
+<li>在运行阶段，被转型变量所引用对象的实际类型必须是目标类型的实例，或者是目标类型的子类、实现类的实例，否则在运行时将引发ClassCastExceptivn异常。<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">String s=null;</div><div class="line">System.out.println(s instanceof String);</div></pre></td></tr></table></figure>
+</li>
+</ul>
+<p>使null调用instanceof运算符时返回false是非常有用的行为，因为instanceof运算符有了一个额外的功能:它可以保证第一个操作数所引用的对象不是null如果instanceof告知一个引用变量是某个特定类型的实例，那么就可以将其转型为该类型，并调用该类型的方法，而不用担心会抛出ClassGastExeception或NullPointerException异常。</p>
+<h1 id="构造器的陷阱"><a href="#构造器的陷阱" class="headerlink" title="构造器的陷阱"></a>构造器的陷阱</h1><h3 id="构造器创建对象吗"><a href="#构造器创建对象吗" class="headerlink" title="构造器创建对象吗"></a>构造器创建对象吗</h3><p>实际上构造器井不会创建Java对象，构造器只是负责执行初始化，在构造器执行之前，Java对象所需要的内存空间，应该说是由new关键字中请出来的。</p>
+<p>绝大部分时候，程序使用new关键字为一个Java对象申请空间之后，都需要使用构造器为这个对象执行初始化。但在某些时候，程序创建Java对象无须调用构造器，以下面两种方式创建的Java对象无须使用构造器。</p>
+<ul>
+<li>使用反序列化的方法恢复java对象。</li>
+<li>使用clone方法复制java对象。<h3 id="无限递归的构造器"><a href="#无限递归的构造器" class="headerlink" title="无限递归的构造器"></a>无限递归的构造器</h3></li>
+</ul>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public class Main &#123;</div><div class="line">    Main main;</div><div class="line">    &#123;</div><div class="line">        main=new Main();</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public Main()&#123;</div><div class="line">        System.out.println(&quot;执行构造器&quot;);</div><div class="line">    &#125;</div><div class="line"></div><div class="line">    public static void main(String[] args) &#123;</div><div class="line">        Main main=new Main();</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>不管是定义实例变量是指定的初始值，还是在非静态初始化块中执行的初始化操作，最终都将被提取到构造器中执行。所以以上代码到时了构造器递归。</p>
+<p>这个程序给出的教训是，无论如何不要导致构造器产生递归调用。也就是说，应该:</p>
+<ul>
+<li>尽量不要在定义实例变量时指定实例变量的值为当前类的实例。</li>
+<li>尽量不要在初始化块中创建当前类的实例口</li>
+<li>尽量不要在构造器内调用本构造器创建Java对象。</li>
+</ul>
+<h3 id="持有当前类的实例"><a href="#持有当前类的实例" class="headerlink" title="持有当前类的实例"></a>持有当前类的实例</h3><p>对于一个java类而言，他的一个实例持有当前类的另一个实例是被允许的，只要程序初始化它持有当前类的实例时不会引起构造器递归就行。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div></pre></td><td class="code"><pre><div class="line">public class Main &#123;</div><div class="line">   private String name;</div><div class="line">   private Main instance;</div><div class="line">   public Main()&#123;</div><div class="line"></div><div class="line">   &#125;</div><div class="line">   public Main(String name)&#123;</div><div class="line">       instance=new Main();</div><div class="line">       instance.name=name;</div><div class="line">   &#125;</div><div class="line">   public static void main(String[] args)&#123;</div><div class="line">       Main main=new Main();</div><div class="line">       Main main2=new Main(&quot;测试&quot;);</div><div class="line">   &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="到底调用哪个重载的方法"><a href="#到底调用哪个重载的方法" class="headerlink" title="到底调用哪个重载的方法"></a>到底调用哪个重载的方法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public class Main &#123;</div><div class="line">    public void info(Object obj,double count)&#123;</div><div class="line">        System.out.println(&quot;obj:&quot;+obj);</div><div class="line">        System.out.println(&quot;count:&quot;+count);</div><div class="line">    &#125;</div><div class="line">    public void info(Object[] objs,double count)&#123;</div><div class="line">        System.out.println(&quot;objs:&quot;+objs);</div><div class="line">        System.out.println(&quot;count:&quot;+count);</div><div class="line">    &#125;</div><div class="line">    public static void main(String[] args)&#123;</div><div class="line">        Main main=new Main();</div><div class="line">        main.info(null,5);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>上面代码方法的调用看似info(Object[],int)和info(Obejct,int)都是可以匹配的，那到底调用哪个呢。</p>
+<p>根据精确匹配原则，当实际调用是传入的实参满足多个方法时，如果某个方法的形参要求参数范围越小，那么这个方法就越精确。很明显，Object[]可以看成Object的子类，info(Object[] ,int)方法匹配的更精确，执行上面程序，将看到如下输出：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div></pre></td><td class="code"><pre><div class="line">objs:null</div><div class="line">count:5.0</div></pre></td></tr></table></figure>
+<p>再看一个极端的例子：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div></pre></td><td class="code"><pre><div class="line">public class Main &#123;</div><div class="line">    public void info(Object obj,int count)&#123;</div><div class="line">        System.out.println(&quot;obj:&quot;+obj);</div><div class="line">        System.out.println(&quot;count:&quot;+count);</div><div class="line">    &#125;</div><div class="line">    public void info(Object[] objs,double count)&#123;</div><div class="line">        System.out.println(&quot;objs:&quot;+objs);</div><div class="line">        System.out.println(&quot;count:&quot;+count);</div><div class="line">    &#125;</div><div class="line">    public static void main(String[] args)&#123;</div><div class="line">        Main main=new Main();</div><div class="line">        main.info(null,5);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>调用方法时第一个参数调info(Object[] objs,double count)比较好，而第二个参数调info(Obejct obj,int count)比较好，而两个参数中和就不知道了。所以系统报错。</p>
+<h3 id="方法重写的陷阱"><a href="#方法重写的陷阱" class="headerlink" title="方法重写的陷阱"></a>方法重写的陷阱</h3><p>对于使用private修饰符修饰的方法，只能在当前类中访问该方法，子类无法访问父类中定义的private方法。既然子类无法访问父类的private。方法，当然也就无法重写该方法。</p>
+<p>如果子类中定义了一个与父类的private方法具有相同的方法名、相同的形参列表、相同的返回值类型的方法，依然不是重写，只是了类中重新定义了一个新方法。</p>
+<h3 id="重写其他访问权限的方法"><a href="#重写其他访问权限的方法" class="headerlink" title="重写其他访问权限的方法"></a>重写其他访问权限的方法</h3><p>如果父类中定义了使用默认访问控制符（也就是不使用访问控制符）修饰方法，这个方法同样可能无法被重写。</p>
+<p>对于不使用访问控制符修饰的方法，它只能被与当前类处于同一个包中的其他类访问，其他包中的子类依然无法访问该方法。只有与当前类处于同一个包中的其他类才能访问该方法。</p>
+<h1 id="非静态内部类的陷阱"><a href="#非静态内部类的陷阱" class="headerlink" title="非静态内部类的陷阱"></a>非静态内部类的陷阱</h1><h3 id="非静态内部类的构造器"><a href="#非静态内部类的构造器" class="headerlink" title="非静态内部类的构造器"></a>非静态内部类的构造器</h3><p>非静态内部类必须寄生在外部类实例中，没有外部类的对象，就不可能产生非静态内部类的对象。因此，非静态内部类不可能有无参数的构造器————即是系统为非静态内部类提供一个默认的构造器，这个默认的构造器也需要一个外部类形参。</p>
+<p>系统在编译阶段总会为非静态内部类的构造器增加一个参数，非静态内部类的构造器的第一个形参总是外部类。因此调用非静态内部类的构造器时必须传入一个外部类对象作为参数，否则程序将会引发运行时异常。</p>
+<h3 id="非静态内部类不能拥有静态成员"><a href="#非静态内部类不能拥有静态成员" class="headerlink" title="非静态内部类不能拥有静态成员"></a>非静态内部类不能拥有静态成员</h3><p>对于非静态内部类而言，由于它本身就是一个非静态的上下文环境，因此非静态内部类不允许拥有静态成员。</p>
+<h3 id="非静态内部类的子类"><a href="#非静态内部类的子类" class="headerlink" title="非静态内部类的子类"></a>非静态内部类的子类</h3><p>由于非静态内部类没有无参数的构造器，因此通过非静态内部类派生子类时也可能存在一些陷阱。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div></pre></td><td class="code"><pre><div class="line">class Base&#123;</div><div class="line">  class In&#123;</div><div class="line">      public void test()&#123;</div><div class="line">          System.out.println(&quot;In的Test方法&quot;);</div><div class="line">      &#125;</div><div class="line">  &#125;</div><div class="line">  class A extends In&#123;</div><div class="line"></div><div class="line">  &#125;</div><div class="line">&#125;</div><div class="line">public class sub extends Base.In&#123;</div><div class="line">    public sub()&#123;</div><div class="line"></div><div class="line">    &#125;</div><div class="line">    public static void main(String[] args)&#123;</div><div class="line">        System.out.println(&quot;Hello World&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>由于非静态内部类In必须寄生在Base对象之内，因此父类Base.In根本没有参数的构造器。而程序定义其子类Base.In时，没有定义构造器，那么系统会为它提供一个无参数的构造器。在sub无参数的构造器内，编译器会增加代码super()————子类总会调用父类的构造器。对于这个super()调用，指定调用父类Base.In无参数的构造器，必然导致编译错误.为了解决这个问题，应该为sub显示定义一个构造器，在该构造器中显示调用Base.In父类对应的构造器。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line">public class sub extends Base.In&#123;</div><div class="line">    public sub()&#123;</div><div class="line">        new Base().super();</div><div class="line">    &#125;</div><div class="line">    public static void main(String[] args)&#123;</div><div class="line">        System.out.println(&quot;Hello World&quot;);</div><div class="line">    &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<p>以上显式的调用父类的构造器。使用new Base()作为主调————即以一个Base对象作为主调，其实这个主调会作为参数擦传入super(),也就是传给In类带一个Base参数的构造器。 </p>
+<h1 id="static关键字"><a href="#static关键字" class="headerlink" title="static关键字"></a>static关键字</h1><h3 id="静态方法属于类"><a href="#静态方法属于类" class="headerlink" title="静态方法属于类"></a>静态方法属于类</h3><p>被static关键字修饰的成员(Field,方法,内部类,初始化块,内部枚举类)属于类本身，而不是当个的java对象，具体到静态方法也是如此，静态方法属于类。而不属于Java对象。</p>
+<h3 id="静态内部类的限制"><a href="#静态内部类的限制" class="headerlink" title="静态内部类的限制"></a>静态内部类的限制</h3><p>当程序使用内部类时,应尽量考虑使用静态内部类，而不是非静态内部类。当程序使用静态内部类时，外部类相当于静态内部类的一个包，因此使用起来比较方便；但另一方面，这也给静态内部类增加了一个限制———静态内部类不能访问外部类的非静态成员。</p>
+]]></content>
+    
+    <summary type="html">
+    
+      instanceof是一个非常简单的运算符。instanceof运算符的前一个操作数通常是一个引用类型的变量，后一个操作数通常是一个类(也可以是接口，可以把接口理解成一个特殊的类)，他用于判断前面的对象是否是后面的类或其子类，实现类的实例。如果是，则返回true,否则，返回false.
+    
+    </summary>
+    
+      <category term="Java" scheme="http://jack921.win/categories/Java/"/>
+    
+    
+      <category term="Java" scheme="http://jack921.win/tags/Java/"/>
+    
+  </entry>
   
   <entry>
     <title>疯狂Java笔记之常见java集合的实现细节</title>
@@ -1272,80 +2031,6 @@ public void onDescriptorWrite(BluetoothGatt gatt,BluetoothGattDescriptor descrip
     
     
       <category term="Android自定义" scheme="http://jack921.win/tags/Android%E8%87%AA%E5%AE%9A%E4%B9%89/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>高仿支付宝9.9.2版本生活模块界面来讲解CoordinatorLayout，AppBarLayout，CollapsingToolbarLayout</title>
-    <link href="http://jack921.win/2016/09/16/%E9%AB%98%E4%BB%BF%E6%94%AF%E4%BB%98%E5%AE%9D9-9-2%E7%89%88%E6%9C%AC%E7%94%9F%E6%B4%BB%E6%A8%A1%E5%9D%97%E7%95%8C%E9%9D%A2%E6%9D%A5%E8%AE%B2%E8%A7%A3CoordinatorLayout%EF%BC%8CAppBarLayout%EF%BC%8CCollapsingToolbarLayout/"/>
-    <id>http://jack921.win/2016/09/16/高仿支付宝9-9-2版本生活模块界面来讲解CoordinatorLayout，AppBarLayout，CollapsingToolbarLayout/</id>
-    <published>2016-09-16T15:52:00.000Z</published>
-    <updated>2017-04-29T16:43:07.300Z</updated>
-    
-    <content type="html"><![CDATA[<p>首先先看看仿制的效果先，如下图：<br><img src="http://upload-images.jianshu.io/upload_images/925576-df6ab23f4846afeb.gif?imageMogr2/auto-orient/strip" alt="fangzhifubao.gif"><br>是不是很像支付宝的效果呢，我们今天就要通过讲解android5.0新出的控件CoordinatorLayout，AppBarLayout，CollapsingToolbarLayout来实现这个效果。</p>
-<p>在讲解之前先看看界面布局文件，在一个一个讲讲怎么实现吧：<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div></pre></td><td class="code"><pre><div class="line">&lt;android.support.design.widget.CoordinatorLayout </div><div class="line">  xmlns:android=&quot;http://schemas.android.com/apk/res/android&quot; </div><div class="line">  xmlns:app=&quot;http://schemas.android.com/apk/res-auto&quot; </div><div class="line">  xmlns:tools=&quot;http://schemas.android.com/tools&quot; </div><div class="line">  android:layout_width=&quot;match_parent&quot; </div><div class="line">  android:layout_height=&quot;match_parent&quot; </div><div class="line">  android:fitsSystemWindows=&quot;true&quot; </div><div class="line">tools:context=&quot;com.example.jack.coordinatorlayouttest.ScrollingActivity&quot;&gt; </div><div class="line">&lt;android.support.design.widget.AppBarLayout </div><div class="line">  android:id=&quot;@+id/app_bar&quot;</div><div class="line">  android:layout_width=&quot;match_parent&quot; </div><div class="line">  android:layout_height=&quot;wrap_content&quot; </div><div class="line">  android:fitsSystemWindows=&quot;true&quot; </div><div class="line">  android:theme=&quot;@style/AppTheme.AppBarOverlay&quot;&gt; &lt;android.support.design.widget.CollapsingToolbarLayout </div><div class="line">  android:id=&quot;@+id/toolbar_layout&quot; </div><div class="line">  android:layout_width=&quot;match_parent&quot; </div><div class="line">  android:layout_height=&quot;match_parent&quot; </div><div class="line">  android:fitsSystemWindows=&quot;true&quot; </div><div class="line">  app:contentScrim=&quot;@color/color1984D1&quot; </div><div class="line">  app:layout_scrollFlags=&quot;scroll|exitUntilCollapsed|snap&quot; app:title=&quot; &quot;&gt; </div><div class="line">&lt;include layout=&quot;@layout/shenghuo_head1&quot; </div><div class="line">  android:layout_width=&quot;match_parent&quot; </div><div class="line">  android:layout_height=&quot;wrap_content&quot; </div><div class="line">  android:layout_marginTop=&quot;100dp&quot; </div><div class="line">  android:layout_marginBottom=&quot;25dp&quot; </div><div class="line">  app:layout_collapseMode=&quot;parallax&quot; </div><div class="line">  app:layout_collapseParallaxMultiplier=&quot;0.8&quot;/&gt; &lt;android.support.v7.widget.Toolbar android:id=&quot;@+id/toolbar&quot; </div><div class="line">  android:layout_width=&quot;match_parent&quot; </div><div class="line">  android:layout_height=&quot;?attr/actionBarSize&quot; </div><div class="line">  app:contentInsetLeft=&quot;0dp&quot; app:contentInsetStart=&quot;0dp&quot; </div><div class="line">  app:layout_collapseMode=&quot;pin&quot;&gt;</div><div class="line"> &lt;include android:id=&quot;@+id/toolbar1&quot; </div><div class="line">  layout=&quot;@layout/toolbar_head1&quot; </div><div class="line">  android:layout_width=&quot;match_parent&quot; </div><div class="line">  android:layout_height=&quot;match_parent&quot; /&gt; </div><div class="line">&lt;include android:id=&quot;@+id/toolbar2&quot; </div><div class="line">  layout=&quot;@layout/toolbar_head2&quot; </div><div class="line">  android:layout_width=&quot;match_parent&quot; </div><div class="line">  android:layout_height=&quot;match_parent&quot; android:visibility=&quot;gone&quot;/&gt; </div><div class="line">&lt;/android.support.v7.widget.Toolbar&gt; </div><div class="line">&lt;/android.support.design.widget.CollapsingToolbarLayout&gt;  </div><div class="line">&lt;/android.support.design.widget.AppBarLayout&gt;  &lt;include </div><div class="line">layout=&quot;@layout/content_scrolling&quot; /&gt;</div><div class="line">&lt;/android.support.design.widget.CoordinatorLayout&gt;</div><div class="line">```  </div><div class="line">1.CoordinatorLayout</div><div class="line">-------------------</div><div class="line"></div><div class="line">这就是整个高仿支付宝界面的核心布局界面的，看看代码量也不多吧，只要就是用了</div><div class="line">CoordinatorLayout，AppBarLayout，CollapsingToolbarLayou，Toolbar这四个控件吧。</div><div class="line">在各个布局文件里，最外围的是CoordinatorLayout这个控件，这个有什么作用呢，就我的大白话来说就是协调子View之间动作的一个父View,通过Behavior来给子view实现交互的。这样好像还是有点说不通，没关系同学们通过看上面的布局文件，可以发现</div><div class="line"></div><div class="line">![img1.PNG](http://upload-images.jianshu.io/upload_images/925576-c0d4b0b05a2d78c4.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)</div><div class="line">这一个内容界面是的布局是`&lt;include layout=&quot;@layout/content_scrolling&quot; /&gt;`这一句的内容是：</div></pre></td></tr></table></figure></p>
-<p>&lt;?xml version=”1.0” encoding=”utf-8”?&gt;</p>
-<p><linearlayout xmlns:android="http://schemas.android.com/apk/res/android" xmlns:app="http://schemas.android.com/apk/res-auto" xmlns:tools="http://schemas.android.com/tools" android:layout_width="match_parent" android:layout_height="match_parent" android:orientation="vertical" tools:showin="@layout/activity_scrolling" app:layout_behavior="@string/appbar_scrolling_view_behavior"><br> <android.support.v7.widget.recyclerview android:id="@+id/myRecyclerView" android:layout_width="match_parent" android:layout_height="match_parent"><br> </android.support.v7.widget.recyclerview><br></linearlayout><br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div><div class="line">36</div><div class="line">37</div><div class="line">38</div><div class="line">39</div><div class="line">40</div><div class="line">41</div><div class="line">42</div><div class="line">43</div><div class="line">44</div><div class="line">45</div><div class="line">46</div><div class="line">47</div><div class="line">48</div><div class="line">49</div><div class="line">50</div><div class="line">51</div><div class="line">52</div><div class="line">53</div><div class="line">54</div><div class="line">55</div><div class="line">56</div><div class="line">57</div><div class="line">58</div><div class="line">59</div><div class="line">60</div><div class="line">61</div><div class="line">62</div><div class="line">63</div><div class="line">64</div><div class="line">65</div><div class="line">66</div><div class="line">67</div><div class="line">68</div><div class="line">69</div><div class="line">70</div><div class="line">71</div><div class="line">72</div><div class="line">73</div><div class="line">74</div><div class="line">75</div><div class="line">76</div><div class="line">77</div><div class="line">78</div><div class="line">79</div><div class="line">80</div><div class="line">81</div><div class="line">82</div><div class="line">83</div><div class="line">84</div><div class="line">85</div><div class="line">86</div><div class="line">87</div><div class="line">88</div><div class="line">89</div><div class="line">90</div><div class="line">91</div><div class="line">92</div><div class="line">93</div><div class="line">94</div><div class="line">95</div><div class="line">96</div><div class="line">97</div><div class="line">98</div><div class="line">99</div><div class="line">100</div><div class="line">101</div><div class="line">102</div><div class="line">103</div><div class="line">104</div><div class="line">105</div><div class="line">106</div><div class="line">107</div><div class="line">108</div><div class="line">109</div><div class="line">110</div><div class="line">111</div></pre></td><td class="code"><pre><div class="line">没错就是一个linearLayout包裹着RecyclerView组成他的内容界面，在这代码里有这一句`app:layout_behavior=&quot;@string/appbar_scrolling_view_behavior&quot;`就是这句和CoordinatorLayout控件互动实现滑动，总结就是CoordinatorLayout控件和app:layout_behavior来进行互动，进而CoordinatorLayout的子控件和app:layout_behavior互动。当然`@string/appbar_scrolling_view_behavior`是系统自带的，本质是一个类，我们也可以自定义这个类实现其他效果，不过这不是我们这一章所讲的了，我们点到即止。</div><div class="line"></div><div class="line">2.AppBarLayout</div><div class="line">--------------</div><div class="line"></div><div class="line">其次就是AppBarLayout，去除官方解释，简单来说就是它可以让你定制当某个可滚动View的滚动手势发生变化时，其内部的子View实现何种动作。内部的子View通过在布局中加`app:layout_scrollFlags`设置执行的动作。而layout_srcollFlags的动作主要如下：</div><div class="line"> 1. scroll:值设为scroll的View会跟随滚动事件一起发生移动。 </div><div class="line">2. enterAlways:值设为enterAlways的View,当ScrollView往下滚动时，该View会直接往下滚动。而不用考虑ScrollView是否在滚动。 </div><div class="line">3. exitUntilCollapsed：值设为exitUntilCollapsed的View，当这个View要往上逐渐“消逝”时，会一直往上滑动，直到剩下的的高度达到它的最小高度后，再响应ScrollView的内部滑动事件。 </div><div class="line">4. enterAlwaysCollapsed：是enterAlways的附加选项，一般跟enterAlways一起使用，它是指，View在往下“出现”的时候，首先是enterAlways效果，当View的高度达到最小高度时，View就暂时不去往下滚动，直到ScrollView滑动到顶部不再滑动时，View再继续往下滑动，直到滑到View的顶部结束。</div><div class="line"></div><div class="line">这是layout_srcollFlags里可以设置的各个属性的解释，考虑文章的重点是模仿支付宝所以没有篇幅和每个属性都给个效果图，所以各属性你们有空还要自己试一试，这样子才能掌握更好。我们这里AppBarLayout关联的是CollapsingToolbarLayout，设置的属性是`app:layout_scrollFlags=&quot;scroll|exitUntilCollapsed|snap&quot;`里面的scroll让</div><div class="line">![img2.PNG](http://upload-images.jianshu.io/upload_images/925576-6e3b6f5ce24552c7.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)</div><div class="line">这可以滑动，而exitUntilCollapsed实现的效果是</div><div class="line">![img4.PNG](http://upload-images.jianshu.io/upload_images/925576-0a588d76add2a59f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)这一块当滑动到最顶的时候不会跟这个继续滑到最顶，而保留这一块。最后snap这是属性是子View不会存在局部显示的情况，滚动Child View的部分高度，当我们松开手指时，Child View要么向上全部滚出屏幕，要么向下全部滚进屏幕。</div><div class="line"></div><div class="line">3.CollapsingToolbarLayout</div><div class="line">-------------------------</div><div class="line">是用来对Toolbar进行再次包装的ViewGroup，主要是用于实现折叠的App Bar效果。CollapsingToolbarLayout只要有这方面：</div><div class="line">1.title展开时是最大的，然后随着收缩会越来越少，直到屏幕的顶部，通过app:title设置title,不然就默认。</div><div class="line">2.通过setContentScrim(Drawable)来设置达到某一个状态之后的出现的效果3.通过setStatusBarScrim(Drawable)来设置达到某一个状态之后的状态栏出现的效果</div><div class="line">4.当`app:layout_collapseMode设为parallax`子View可以选择在当前的布局当时是否以“视差”的方式来跟随滚动</div><div class="line">5.当`app:layout_collapseMode设为pin`Toolbar固定位置而不受移动的影响</div><div class="line">在我们实现这里，我们把`layout=&quot;@layout/shenghuo_head1&quot;`即</div><div class="line"></div><div class="line">![img4.PNG](http://upload-images.jianshu.io/upload_images/925576-9138e387abbc552c.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240)</div><div class="line">设为`app:layout_collapseMode=&quot;parallax&quot;`让它以“视差”的方式来跟随滚动，而toolbar设为`app:layout_collapseMode=&quot;pin&quot;`以让他固定不动。</div><div class="line"></div><div class="line"></div><div class="line">4.Toolbar动态变化</div><div class="line">-------------</div><div class="line">在此整体布局就已经完成，不过还有一个效果就是向上移动是toolbar的的View是动态变化的，一开始我以为这些控件会有这个功能吧，没想到找了很久都没找到，没办法只能自己实现了。二话不说上代码：</div><div class="line"></div><div class="line">``` </div><div class="line">private AppBarLayout mAppBarLayout=null;</div><div class="line"> private View mToolbar1=null; </div><div class="line">private View mToolbar2=null; </div><div class="line">private ImageView mZhangdan=null;</div><div class="line">private TextView mZhangdan_txt=null; </div><div class="line">private ImageView mTongxunlu=null; </div><div class="line">private ImageView mJiahao=null; </div><div class="line">private ImageView mZhangdan2=null; </div><div class="line">private ImageView mShaoyishao=null; </div><div class="line">private ImageView mSearch=null; </div><div class="line">private ImageView mZhaoxiang=null; </div><div class="line">private RecyclerView myRecyclerView; </div><div class="line"></div><div class="line">@Override protected void onCreate(Bundle savedInstanceState) &#123; </div><div class="line">super.onCreate(savedInstanceState); setContentView(R.layout.activity_scrolling);</div><div class="line"></div><div class="line">myRecyclerView=(RecyclerView)findViewById(R.id.myRecyclerView);</div><div class="line">myRecyclerView.setLayoutManager(new LinearLayoutManager(this)); </div><div class="line">myRecyclerView.setAdapter(new ToolbarAdapter(this)); </div><div class="line">mAppBarLayout=(AppBarLayout)findViewById(R.id.app_bar); </div><div class="line"></div><div class="line">mToolbar1=(View)findViewById(R.id.toolbar1); </div><div class="line">mToolbar2=(View)findViewById(R.id.toolbar2);</div><div class="line"></div><div class="line">mZhangdan=(ImageView)findViewById(R.id.img_zhangdan); </div><div class="line">mZhangdan_txt=(TextView)findViewById(R.id.img_zhangdan_txt); </div><div class="line">mTongxunlu=(ImageView)findViewById(R.id.tongxunlu);</div><div class="line">mJiahao=(ImageView)findViewById(R.id.jiahao); </div><div class="line"></div><div class="line">mZhangdan2=(ImageView)findViewById(R.id.img_shaomiao); </div><div class="line">mShaoyishao=(ImageView)findViewById(R.id.img_fukuang); </div><div class="line">mSearch=(ImageView)findViewById(R.id.img_search); </div><div class="line">mZhaoxiang=(ImageView)findViewById(R.id.img_zhaoxiang); </div><div class="line"></div><div class="line">mAppBarLayout.addOnOffsetChangedListener(</div><div class="line">new AppBarLayout.OnOffsetChangedListener() &#123;</div><div class="line"> @Override public void onOffsetChanged(AppBarLayout appBarLayout, int verticalOffset) &#123; </div><div class="line">if (verticalOffset == 0)&#123;</div><div class="line"> //张开</div><div class="line">mToolbar1.setVisibility(View.VISIBLE);</div><div class="line">mToolbar2.setVisibility(View.GONE); </div><div class="line">setToolbar1Alpha(255); </div><div class="line">&#125; else if (Math.abs(verticalOffset)&gt;=appBarLayout.getTotalScrollRange()) &#123;</div><div class="line"> //收缩 </div><div class="line">mToolbar1.setVisibility(View.GONE); </div><div class="line">mToolbar2.setVisibility(View.VISIBLE); </div><div class="line">setToolbar2Alpha(255); </div><div class="line">&#125; else &#123;</div><div class="line"> int alpha=255-Math.abs(verticalOffset)-150; </div><div class="line">if(alpha&lt;=0)&#123; </div><div class="line">//收缩</div><div class="line">toolbar mToolbar1.setVisibility(View.GONE); </div><div class="line">mToolbar2.setVisibility(View.VISIBLE); </div><div class="line">setToolbar2Alpha(Math.abs(verticalOffset)); </div><div class="line">&#125;else&#123; </div><div class="line">//张开</div><div class="line">toolbar mToolbar1.setVisibility(View.VISIBLE); </div><div class="line">mToolbar2.setVisibility(View.GONE); setToolbar1Alpha(alpha); </div><div class="line">  &#125;</div><div class="line"> &#125;</div><div class="line"> &#125;</div><div class="line"> &#125;);</div><div class="line"> &#125;</div><div class="line"> //设置展开时各控件的透明度 </div><div class="line">public void setToolbar1Alpha(int alpha)&#123;</div><div class="line">  mZhangdan.getDrawable().setAlpha(alpha); </div><div class="line">  mZhangdan_txt.setTextColor(Color.argb(alpha,255,255,255)); </div><div class="line">  mTongxunlu.getDrawable().setAlpha(alpha); </div><div class="line">  mJiahao.getDrawable().setAlpha(alpha); </div><div class="line">&#125; </div><div class="line">//设置闭合时各控件的透明度 </div><div class="line">public void setToolbar2Alpha(int alpha)&#123;</div><div class="line">  mZhangdan2.getDrawable().setAlpha(alpha); </div><div class="line">  mShaoyishao.getDrawable().setAlpha(alpha);</div><div class="line">  mSearch.getDrawable().setAlpha(alpha);     </div><div class="line">  mZhaoxiang.getDrawable().setAlpha(alpha); </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>代码还是有点多了不过最核心就设置AppBarLayout 的监听器addOnOffsetChangedListener来进行效果的处理。当verticalOffset=0的时候即使整个展开的是时候要做的就是显示要显示的，隐藏要隐藏的设置，在设置透明度，同理当verticalOffset等于appBarLayout.getTotalScrollRange()即等于最大值的时候，就是关闭的时候，处理的展开相反。当他在中间值的时候，通过`int alpha=255-Math.abs(verticalOffset)-150;得到要设置的透明度，减去150是为了让效果更明显。当alpha小于0的时候是执行展开的toolbar的透明度效果，反之大于0的时候是闭合时toolbar的透明图效果。</p>
-<p><strong>剩下的看<a href="https://github.com/jack921/CoordinatorLayoutTest" target="_blank" rel="external">源码</a>吧</strong></p>
-]]></content>
-    
-    <summary type="html">
-    
-      我们今天就要通过讲解android5.0新出的控件CoordinatorLayout，AppBarLayout，CollapsingToolbarLayout来实现这个支付宝9.9.2版本生活模块界面效果
-    
-    </summary>
-    
-      <category term="Android" scheme="http://jack921.win/categories/Android/"/>
-    
-    
-      <category term="Android界面" scheme="http://jack921.win/tags/Android%E7%95%8C%E9%9D%A2/"/>
-    
-  </entry>
-  
-  <entry>
-    <title>Android自定义钟表</title>
-    <link href="http://jack921.win/2016/09/11/Android%E8%87%AA%E5%AE%9A%E4%B9%89%E9%92%9F%E8%A1%A8/"/>
-    <id>http://jack921.win/2016/09/11/Android自定义钟表/</id>
-    <published>2016-09-11T15:56:00.000Z</published>
-    <updated>2017-04-29T16:41:25.903Z</updated>
-    
-    <content type="html"><![CDATA[<h1 id="android自定义钟表"><a href="#android自定义钟表" class="headerlink" title="android自定义钟表"></a>android自定义钟表</h1><p><strong>首先看看效果图先</strong></p>
-<p><img src="http://upload-images.jianshu.io/upload_images/925576-f2c4c884c9d156fe.gif?imageMogr2/auto-orient/strip" alt="time.gif"></p>
-<a id="more"></a>
-<p>然后看看自定义的属性<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div></pre></td><td class="code"><pre><div class="line">&lt;resources&gt;    </div><div class="line">&lt;!--钟表整体颜色--&gt;    </div><div class="line">&lt;attr name=&quot;color&quot; format=&quot;color&quot;/&gt;    </div><div class="line">&lt;!--数字大小--&gt;   </div><div class="line"> &lt;attr name=&quot;numSize&quot; format=&quot;dimension&quot;/&gt;    </div><div class="line">&lt;!--中心外圆半径--&gt;    </div><div class="line">&lt;attr name=&quot;inCircle&quot; format=&quot;integer&quot;/&gt;    </div><div class="line">&lt;!--中心内圆半径--&gt;   </div><div class="line"> &lt;attr name=&quot;outCircle&quot; format=&quot;integer&quot;/&gt;   </div><div class="line"> &lt;declare-styleable name=&quot;ClockView&quot;&gt; </div><div class="line"> &lt;attr name=&quot;numSize&quot;/&gt;        </div><div class="line">&lt;attr name=&quot;color&quot;/&gt;       </div><div class="line"> &lt;attr name=&quot;inCircle&quot;/&gt;        </div><div class="line">&lt;attr name=&quot;outCircle&quot;/&gt;    </div><div class="line">&lt;/declare-styleable&gt;</div><div class="line">&lt;/resources&gt;</div></pre></td></tr></table></figure></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div></pre></td><td class="code"><pre><div class="line">在xml界面的编写</div><div class="line">&lt;resources&gt;</div><div class="line">&lt;com.example.jack.clock.widget.ClockView  </div><div class="line">    android:layout_width=&quot;match_parent&quot; </div><div class="line">    android:layout_height=&quot;wrap_content&quot;     </div><div class="line">    app:color=&quot;@color/colorPrimary&quot; </div><div class="line">    app:inCircle=&quot;15&quot; </div><div class="line">    app:outCircle=&quot;25&quot; </div><div class="line">    app:numSize=&quot;18dp&quot;/&gt;</div><div class="line">&lt;/resources&gt;</div></pre></td></tr></table></figure>
-<p>自定义各参数的初始化<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div><div class="line">27</div><div class="line">28</div><div class="line">29</div><div class="line">30</div><div class="line">31</div><div class="line">32</div><div class="line">33</div><div class="line">34</div><div class="line">35</div></pre></td><td class="code"><pre><div class="line"> public ClockView(Context context) &#123;  </div><div class="line">  this(context,null);</div><div class="line">&#125;</div><div class="line">public ClockView(Context context, AttributeSet attrs) &#123; </div><div class="line">   this(context, attrs,0);</div><div class="line">&#125;</div><div class="line">public ClockView(Context context, AttributeSet attrs, int defStyleAttr)&#123;    </div><div class="line">super(context, attrs, defStyleAttr);    </div><div class="line">display((WindowManager)getContext().getSystemService(Context.WINDOW_SERVICE)).getDefaultDisplay();    screemWidth=display.getWidth();    screemHeight=display.getHeight();    </div><div class="line">float density=getResources().getDisplayMetrics().density;    marginLongPoint=(int)density*8;    </div><div class="line">maginShortPoint=(int)density*16;    </div><div class="line">maginRadius=(int)density*10;    </div><div class="line">maginText=(int)density*10;   </div><div class="line">hourMargin=(int)density*75;    </div><div class="line">minuteMargin=(int)density*40;    </div><div class="line">TypedArray typedArray=context.getTheme().obtainStyledAttributes(attrs,R.styleable.ClockView,defStyleAttr,0);    </div><div class="line">int numCount=typedArray.getIndexCount();    </div><div class="line">for(int i=0;i&lt;numCount;i++)&#123;        </div><div class="line">int attr=typedArray.getIndex(i);        </div><div class="line">  switch(attr)&#123;            </div><div class="line">        case R.styleable.ClockView_numSize:                              numSize=typedArray.getDimensionPixelSize(attr,(int)TypedValue                        .applyDimension(TypedValue.COMPLEX_UNIT_SP,15,getResources().getDisplayMetrics()));                </div><div class="line">break;            </div><div class="line">       case R.styleable.ClockView_color:                  color=typedArray.getColor(attr,Color.BLACK);                </div><div class="line">break;            </div><div class="line">case R.styleable.ClockView_inCircle:                </div><div class="line">inCircle=typedArray.getInt(attr,15);                </div><div class="line">break;            </div><div class="line">case R.styleable.ClockView_outCircle:                </div><div class="line">outCircle=typedArray.getInt(attr,25);                </div><div class="line">break;        </div><div class="line">&#125;    </div><div class="line">&#125;   </div><div class="line"> typedArray.recycle();    </div><div class="line">initCanvas();</div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>接下来就是设定这个自定义View的大小，在没有大小自适应的时候，view的高度我这位整个手机屏幕高度的三分之一，宽度为整个屏幕的宽度<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div></pre></td><td class="code"><pre><div class="line"> if(widthModel==MeasureSpec.EXACTLY)&#123; width=widthSize; </div><div class="line">  &#125;else&#123; </div><div class="line">  width=screemWidth; </div><div class="line">&#125; if(heightModel==MeasureSpec.EXACTLY)&#123; </div><div class="line">  height=heightSize; </div><div class="line">&#125;else&#123;</div><div class="line">  height=screemHeight/3; </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>在onDraw()方法里我们就可以开始画图了<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div><div class="line">25</div><div class="line">26</div></pre></td><td class="code"><pre><div class="line">@Override </div><div class="line">protected void onDraw(Canvas canvas) &#123; </div><div class="line">//得到圆的半径 if(getWidth()&gt;getHeight())&#123; </div><div class="line">radius=getHeight()/2-maginRadius; </div><div class="line">&#125;else&#123; </div><div class="line">radius=getWidth()/2-maginRadius; </div><div class="line">&#125; </div><div class="line">//获得View一半的宽度和高度 </div><div class="line">halfWidth=getWidth()/2; </div><div class="line">halfHeight=getHeight()/2; </div><div class="line">//保存状态 </div><div class="line">canvas.save();</div><div class="line"> //画大圆 </div><div class="line">canvas.drawCircle(halfWidth,halfHeight,radius,paint);</div><div class="line"> //画中间大圆 </div><div class="line">canvas.drawCircle(halfWidth,halfHeight,outCircle,inCirclePaint); </div><div class="line">//画中间小圆 </div><div class="line">canvas.drawCircle(halfWidth,halfHeight,inCircle,outCirclePaint);</div><div class="line"> //画60个刻度和时钟数字 </div><div class="line">drawClockScale(canvas); </div><div class="line">//绘制时间指针 </div><div class="line">refreshTime(canvas);</div><div class="line"> //返回状态 </div><div class="line">canvas.restore(); </div><div class="line">//每隔一秒刷新 postInvalidateDelayed(1000);</div><div class="line"> &#125;</div></pre></td></tr></table></figure></p>
-<p>首先我们画的是外部的圆圈和正中间的半透明的大圆和小圆 ，即得到整个view的中心点也就是一半的宽(halfWidth)和高(halfHeight)画半径为radius的圆</p>
-<p>###代码如下:<br>//画大圆<br>canvas.drawCircle(halfWidth,halfHeight,radius,paint);<br>//画中间大圆<br>canvas.drawCircle(halfWidth,halfHeight,outCircle,inCirclePaint);<br> //画中间小圆<br>canvas.drawCircle(halfWidth,halfHeight,inCircle,outCirclePaint); </p>
-<p><img src="http://upload-images.jianshu.io/upload_images/925576-d75ba331c4ff28d6.gif?imageMogr2/auto-orient/strip" alt="GIF1.gif"></p>
-<p>接着就是要画60个刻度和时钟数字这是整个自定义的难点和重点，不说废话先贴代码：</p>
-<p>###画60个刻度和时钟数字<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line"> //画60个刻度 </div><div class="line">public void drawClockScale(Canvas canvas)&#123; canvas.translate(halfWidth,halfHeight); canvas.save();</div><div class="line"> //长指针的长 </div><div class="line">LongCalibration=radius/marginLongPoint; </div><div class="line">//短指针的长 </div><div class="line">ShortCalibration=radius/maginShortPoint; </div><div class="line">for(int i=0;i&lt;pointNum;i++)&#123; </div><div class="line">      if(i%5==0)&#123; </div><div class="line">  //绘画文字 </div><div class="line">canvas.save();</div><div class="line"> Rect rect=new Rect(); </div><div class="line">int number=i==0?12:(i/5);</div><div class="line"> textPaint.getTextBounds((number+&quot;&quot;),0,(number+&quot;&quot;).length(),rect); canvas.translate(0,-radius+LongCalibration+((rect.bottom-rect.top)/2)+maginText); </div><div class="line">canvas.rotate(-6*i);</div><div class="line"> canvas.drawText(number+&quot;&quot;,0,(rect.bottom-rect.top)/2,textPaint); canvas.restore();</div><div class="line"> //画线 </div><div class="line">canvas.drawLine(0,-radius+LongCalibration,0,-radius,paint); </div><div class="line">&#125;else&#123; </div><div class="line">canvas.drawLine(0,-radius+ShortCalibration,0,-radius,paint); </div><div class="line">&#125; </div><div class="line">canvas.rotate(6); </div><div class="line">&#125; </div><div class="line">canvas.restore();</div><div class="line"> &#125;</div></pre></td></tr></table></figure></p>
-<p>pointNum=60即60个指针刻度，我们先把canvas的坐标原点移动到整个View的中心即canvas.translate(halfWidth,halfHeight);接着这个圆是360度我们有60个刻度即每个刻度的旋转角度为6度，所以我们每一次循环都要把canvas旋转6度即canvas.rotate(6)。理解这个之后我们每次循环通过canvas.drawline画出刻度，其中LongCalibration是长刻度的长，而ShortCalibration就是短刻度的长，</p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">canvas.drawLine(0,-radius+LongCalibration,0,-radius,paint);</div></pre></td></tr></table></figure>
-<p><img src="http://upload-images.jianshu.io/upload_images/925576-059d7be22533c11c.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="git2.PNG"></p>
-<p>即旋转画出X轴Y轴为(0,-radius+LongCalibration)和(0,-radius)这两点的直线。接着就是画文字了，首先Rect计算出显示的数字的大小，再把canvas的原点移动半径减去刻度的长度和数字一半大小，自定义的间隙之后的距离，此时原点的位置就是需要画出的数字的位置，canvas在旋转-6*i的距离才能使字体竖直，效果如下：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/925576-a87616caf1c37573.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="time2.PNG"></p>
-<p>###绘制时间指针<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div><div class="line">7</div><div class="line">8</div><div class="line">9</div><div class="line">10</div><div class="line">11</div><div class="line">12</div><div class="line">13</div><div class="line">14</div><div class="line">15</div><div class="line">16</div><div class="line">17</div><div class="line">18</div><div class="line">19</div><div class="line">20</div><div class="line">21</div><div class="line">22</div><div class="line">23</div><div class="line">24</div></pre></td><td class="code"><pre><div class="line">//获取时间指针对应的角度 </div><div class="line">public void refreshTime(Canvas canvas)&#123; </div><div class="line">//获取获取当前的时间 </div><div class="line">Calendar mCalendar=Calendar.getInstance(); </div><div class="line">int tempHour=mCalendar.get(Calendar.HOUR); </div><div class="line">int tempMinute=mCalendar.get(Calendar.MINUTE); </div><div class="line">int tempSecond=mCalendar.get(Calendar.SECOND); </div><div class="line">int hourRotate=new Float(360*((float)tempHour/12)).intValue(); </div><div class="line">//计算出份指针的旋转的角度 </div><div class="line">int minuteRotate=new Float(360*((float)tempMinute/60)).intValue(); //计算出时指针旋转的角度，注(时的角度是当前小时的角度再加分钟所引起小时偏转的角度)</div><div class="line"> hourRotate+=new Float(30*((float)minuteRotate/360)).intValue();</div><div class="line"> //计算出秒指针旋转的角度 </div><div class="line">int secondRotate=new Float(360*((float)tempSecond/60)).intValue(); drawCircleLine(canvas,hourRotate,minuteRotate,secondRotate); </div><div class="line">&#125; </div><div class="line"> //时间指针 </div><div class="line">public void drawCircleLine(Canvas canvas,int hour,int minute,int second)&#123;</div><div class="line"> marginLong=radius-LongCalibration-minuteMargin;  marginShort=radius-LongCalibration-hourMargin; canvas.rotate(180); </div><div class="line">//画小时指针 </div><div class="line">RectF hourRectF=new RectF(-pointRadio,-pointRadio,pointRadio,marginShort); canvas.save(); canvas.rotate(hour); canvas.drawRoundRect(hourRectF,circular,circular,outCirclePaint); canvas.restore();</div><div class="line"> //画分钟指针 </div><div class="line">RectF minuteRectF=new RectF(-pointRadio,-pointRadio,pointRadio,marginLong); canvas.save(); canvas.rotate(minute); canvas.drawRoundRect(minuteRectF,circular,circular,outCirclePaint); canvas.restore(); </div><div class="line">//画秒指针 canvas.save(); canvas.rotate(second); canvas.drawLine(0,0,0,radius-10,secondPaint);</div><div class="line"> canvas.restore(); </div><div class="line">&#125;</div></pre></td></tr></table></figure></p>
-<p>这里需要说的是<br> <figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">RectF hourRectF=new RectF(-pointRadio,-pointRadio,pointRadio,marginShort);</div></pre></td></tr></table></figure></p>
-<p>用来确定指针的位置，pointRadio代表的是这个矩形的半径，而    canvas.rotate(180);旋转180保证按我们正常的思路一样指针向上，设RectF的左上角为(-pointRadio,-pointRadio)是为了保持在中心点(注：此时canvas的原点是view的中心），剩下就是画指针了。效果图如下：</p>
-<p><img src="http://upload-images.jianshu.io/upload_images/925576-3160b849429705c9.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="time3.PNG"></p>
-<p>不用这是静态图，最后调用<code>postInvalidateDelayed(1000);</code>保证每个一秒就调用onDraw()方法来重绘View来实现view的每个一秒的动态变化，这样就完成效果图的功能。</p>
-]]></content>
-    
-    <summary type="html">
-    
-      &lt;h1 id=&quot;android自定义钟表&quot;&gt;&lt;a href=&quot;#android自定义钟表&quot; class=&quot;headerlink&quot; title=&quot;android自定义钟表&quot;&gt;&lt;/a&gt;android自定义钟表&lt;/h1&gt;&lt;p&gt;&lt;strong&gt;首先看看效果图先&lt;/strong&gt;&lt;/p&gt;
-&lt;p&gt;&lt;img src=&quot;http://upload-images.jianshu.io/upload_images/925576-f2c4c884c9d156fe.gif?imageMogr2/auto-orient/strip&quot; alt=&quot;time.gif&quot;&gt;&lt;/p&gt;
-    
-    </summary>
-    
-      <category term="Android自定义" scheme="http://jack921.win/categories/Android%E8%87%AA%E5%AE%9A%E4%B9%89/"/>
-    
-    
-      <category term="Android自定义控件" scheme="http://jack921.win/tags/Android%E8%87%AA%E5%AE%9A%E4%B9%89%E6%8E%A7%E4%BB%B6/"/>
     
   </entry>
   

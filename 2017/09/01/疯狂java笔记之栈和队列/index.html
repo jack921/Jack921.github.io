@@ -1,0 +1,156 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>疯狂java笔记之栈和队列 | 谢汉杰</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/6.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">疯狂java笔记之栈和队列</h1><a id="logo" href="/.">谢汉杰</a><p class="description">保持愚蠢，保持饥饿</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">疯狂java笔记之栈和队列</h1><div class="post-meta">Sep 1, 2017<span> | </span><span class="category"><a href="/categories/Java/">Java</a></span><script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><a data-disqus-identifier="2017/09/01/疯狂java笔记之栈和队列/" href="/2017/09/01/疯狂java笔记之栈和队列/#disqus_thread" class="disqus-comment-count"></a><div class="post-content"><h1 id="栈"><a href="#栈" class="headerlink" title="栈"></a>栈</h1><p>栈的英文单词是Stack,它代表一种特殊的线性表，这种线性表只能在固定一端（通常认为是线性表的尾端）进行插入，删除操作。</p>
+<h3 id="栈的基本定义"><a href="#栈的基本定义" class="headerlink" title="栈的基本定义"></a>栈的基本定义</h3><p>栈是一种数据结构，它代表只能在某一端进行插入，删除操作的特殊线性表，通常就是在线性表的尾端进行插入，删除操作。</p>
+<p>对于栈而言，允许进行插入，删除操作的一端被称为栈顶（top）,另一端咋被称为栈底（bottom）。</p>
+<p>对于一个栈不包含任何元素，那么这个栈就被称为空栈。<br>从栈顶插入一个元素被称为进栈，将一个元素从栈顶删除被称为“弹出栈”，对应的英文说法为pop,如下图:</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-c27e0aae2ae39653.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="stack.PNG"></p>
+<p>对于元素为a0,a1,a2,…,an-1的栈，假设栈中元素被a0,a1,a2,…,an-1的次序进栈，那么a0未栈底元素，an-1为栈顶元素。出栈时第一个弹出的元素应为栈顶元素，也就是an-1.也就是说，栈中元素的修改是按后进先出(LIFO)的原则进行的。</p>
+<p>归纳起来，可以再对栈下一个定义：栈就是一种后进先出(LIFO)的线性表。</p>
+<h3 id="栈的常用操作"><a href="#栈的常用操作" class="headerlink" title="栈的常用操作"></a>栈的常用操作</h3><p>栈是一种被限制过的线性表，通常不应该提供线性表中的如下方法：</p>
+<ul>
+<li>获取指定索引处的元素</li>
+<li>按值查找数据元素的位置</li>
+<li>向指定索引处插入数据元素</li>
+<li>删除指定元素索引处的数据元素<br>从上面这个方法可以看出，栈不应该提供从中间任意位置<br>访问元素的方法。也就是说，栈只允许在栈顶插入，删除元素。<br>栈的常用操作如下：</li>
+<li>初始化：通常是一个构造器，用于创建一个空栈</li>
+<li>返回栈的长度：该方法用于返回栈中数据元素的个数</li>
+<li>入栈：向栈的栈顶插入一个数据元素，栈的长度+1</li>
+<li>出栈：从栈的栈顶删除一个数据元素，栈的长度-1，该方法通常饭后被删除的元素</li>
+<li>访问栈顶元素：返回栈顶的数据元素，但不删除栈顶元素</li>
+<li>判断栈是否为空：改方法判断栈是否为空，如果栈为空则返回true,否则返回false.</li>
+<li>清空栈：将栈清空</li>
+</ul>
+<p>类似于线性表即采用顺序存储的方式来实现，也可以用链式结构来实现，也可使用链式结构来实现，栈同样即可采用顺序结构来存储栈内的元素，也可采用链式结构来存储栈内元素。</p>
+<h3 id="栈的顺序存储结构及实现"><a href="#栈的顺序存储结构及实现" class="headerlink" title="栈的顺序存储结构及实现"></a>栈的顺序存储结构及实现</h3><p>顺序存储结构的栈简称为顺序栈，它利用一组地址连续的存储单元依次存放从栈底到栈顶的数据元素。栈底位置固定不变，它的栈顶可以直接通过顺序栈底层数组的数组元素arr[size-1]来访问。顺序栈的存储示意图如下图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-76ff60663c8006a7.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="stack_sort.PNG"></p>
+<p>顺序栈中数据元素的物理关系和逻辑关系是一致的，先进栈的元素位于栈底，栈底元素的存储位置相对也比较小。</p>
+<h4 id="1-进栈"><a href="#1-进栈" class="headerlink" title="1.进栈"></a>1.进栈</h4><p>对于顺序栈的进栈操作而言，只需将新的数据元素存入栈内，然后让记录栈内元素个数的变量加1，程序即可再次通过arr[size-1]重新访问新的栈顶元素。进栈操作示意图如下：<br><img src="http://upload-images.jianshu.io/upload_images/925576-0f3db7989bb989f5.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="inti_stack.PNG"></p>
+<p>由于顺序栈底层通常会采用数组来保存数据元素，因此可能出现的情况是：当程序试图让一个数据元素进栈时，底层数据已满，那么就必须扩充底层数组的长度来容纳新进栈的数据元素。</p>
+<h4 id="1-出栈"><a href="#1-出栈" class="headerlink" title="1.出栈"></a>1.出栈</h4><p>对于顺序栈的出栈操作而言，需要将栈顶元素弹出栈，程序要做两件事。</p>
+<ul>
+<li>让记录栈内元素个数的变量减1.</li>
+<li>释放数组对栈顶元素的引用。</li>
+</ul>
+<p>出栈操作示意图如下图:<br><img src="http://upload-images.jianshu.io/upload_images/925576-2c51bab9b963cdbf.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="out_stack.PNG"></p>
+<p>对于删除操作来说，只要让记录栈内元素个数的size减1，程序即可通过arr[size-1]访问到新的栈顶元素。但不要忘记释放原来栈顶的数组引用，否则会引起内存泄漏。</p>
+<p>栈比普通线性表的功能更弱，栈时一种被限制过的线性表，只能从栈顶插入，删除数据元素。</p>
+<h3 id="栈的链式存储结构及实现"><a href="#栈的链式存储结构及实现" class="headerlink" title="栈的链式存储结构及实现"></a>栈的链式存储结构及实现</h3><p>程序可以采用单链表来保存栈中所有元素，这种链式结构的栈也被称为栈链。对于栈链而言，栈顶元素不断地改变，程序只要使用一个top引用来记录当前的栈顶元素即可。top引用变量永远引用栈顶元素，再使用一个size变量记录当前栈中包含多少个元素即可。如下图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-5e7b7d441ee96051.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="linked_stack.PNG"></p>
+<h4 id="1-进栈-1"><a href="#1-进栈-1" class="headerlink" title="1.进栈"></a>1.进栈</h4><p>对于栈链的进栈操作，程序只需要做如下两件事：<br>-让top引用指向新元素添加的元素，新元素的next引用指向原来的栈顶元素。</p>
+<ul>
+<li>让记录栈内元素个数的size变量加1.<br>进栈操作示意图如下：</li>
+</ul>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-8330e7b207ce7a2f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="into_linked_stack.PNG"></p>
+<h4 id="2-出栈"><a href="#2-出栈" class="headerlink" title="2.出栈"></a>2.出栈</h4><p>对于链栈的出栈操作，需要将栈顶元素弹出栈，程序需要做两件事情：</p>
+<ul>
+<li>让top引用指向原栈顶元素的下一个元素，并释放原来的栈顶元素</li>
+<li>让记录栈内元素个数的size变量减1.</li>
+</ul>
+<p>出栈操作示意图如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-91458e48e570a9b3.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="out_linked_stack.PNG"></p>
+<p>对于顺序栈来说，程序开始就需要在底层为他开辟一块连续的内存（数组）,这个空间浪费其实很大.从空间利用率的角度说，链栈的空间利用率比顺序栈的空间利用率要高一些。</p>
+<h3 id="java集合中的栈"><a href="#java集合中的栈" class="headerlink" title="java集合中的栈"></a>java集合中的栈</h3><p>Java集合实际上提供两种栈供开发者使用：</p>
+<ul>
+<li>java.util.Stack:它就是一个最普通的顺序栈，底层数据实现。这个Stick类是线程安全的，在多线程环境下也可以放心使用</li>
+<li>java.util.LinkedList:LinkedList是一个双端链表：除此之外。LinkedList还可作为栈使用，查看该类api将会发现，他同样提供了push(),pop(),peek()等方法，这表明LinkedList其实还可以当成栈使用。LinkedList代表栈的链式实现，但它是线程不安全的，如果需要在多线程环境下使用，则应该使用Collections类的工具发将其“改造”成线程安全的类。</li>
+</ul>
+<h1 id="队列"><a href="#队列" class="headerlink" title="队列"></a>队列</h1><h3 id="队列的基本定义"><a href="#队列的基本定义" class="headerlink" title="队列的基本定义"></a>队列的基本定义</h3><p>队列是一种特殊的线性表，他只允许在表的前端(front)进行删除操作，只允许在表的后端（rear）进行插入操作，进行插入操作的端称为队尾，进行删除的端称为对头。</p>
+<p>如果队列中不包含任何元素，该队列就被称为空队列。</p>
+<p>对于一个队列来说，每个元素总是从队列的rear端进入队列，然后等待该与元素之前的所有元素出对之后，当前元素才能出对。因此，把队列简称为先进先出（FIFO）的线性表。如下图：<br><img src="http://upload-images.jianshu.io/upload_images/925576-26b83f3ee1284071.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="queue.PNG"></p>
+<h3 id="队列的常用操作"><a href="#队列的常用操作" class="headerlink" title="队列的常用操作"></a>队列的常用操作</h3><p>队列同时是一种被限制过的线性表，通常不应该提供线性表中的如下方法：</p>
+<ul>
+<li>获取指定索引处的元素</li>
+<li>按值查找数据元素的位置</li>
+<li>向指定索引处插入数据元素</li>
+<li>删除指定索引处的数据元素<br>从上面这些方法可以看出，队列不应该提供从中间任意位置访问元素的方法，也就是说，队列只允许在队列的前端（front）删除元素，只允许在队列的后端（rear）插入元素。<br>队列的常用操作如下：</li>
+<li>初始化:通常是一个构造器，用于创建一个空队列</li>
+<li>返回队列的长度:该方法用十返回队列中数据元素的个数。</li>
+<li>加入元索:向队列的rear端插入一个数据元素，队列的长度+1</li>
+<li>删除元素:从队列的front端删除一个数据元素，队列的长度-1，该方法通常返回被删除的元素。</li>
+<li>访问队列的前端元素:返回队列的front端的数据元素，但不删除该元素。</li>
+<li>判断队列是否为空:该方法判断队列是否为空，如果队列为空则返回true否则返回false</li>
+<li>清空队列：将队列清空</li>
+</ul>
+<p>类似于线性表既可采用顺序存储的方式来实现，也可采用链式结构来卖现，队列同样既可采用顺序结构来存储队列元素，也可采用链式结构来存储队列元素。</p>
+<h3 id="队列的顺序存储结构及实现"><a href="#队列的顺序存储结构及实现" class="headerlink" title="队列的顺序存储结构及实现"></a>队列的顺序存储结构及实现</h3><p>系统采用一组地址连续的存储单元依次存放队列从rear端到front端的所有数据元素，程序只需(front和rear两个整型变量来记录队列front端的元素索引、rear端的元素索引。示意图如下：<br><img src="http://upload-images.jianshu.io/upload_images/925576-a71c139f7e2501a3.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="queue_sort.PNG"></p>
+<p>顺序队列可能会造成假满的问题，程序有如下解决方：</p>
+<ul>
+<li>每次将元素移除队列时将队列中的所有元素向front端移动一位，这种方式front值永远为0，有元素插入队列时rear值+1，有元素移除队列时rear值-1,。但这种方式非常浪费时间，因为每次将元素从队列移除都需要进行“整体搬家”。</li>
+<li>将数组存储区看成一个首尾相接的环形区域，当存放数组的最大地址之后，rear值再次变为0。采用这种技巧存储的队列称为循环队列。</li>
+</ul>
+<h3 id="循环队列"><a href="#循环队列" class="headerlink" title="循环队列"></a>循环队列</h3><p>为了重新利用循环顺序队列底层数组中已删除元素所占用的空间，消除可能出现的“假满”现象，可以将顺序队列改进为循环队列。</p>
+<p>循环队列是首尾相连的队列：当front,rear变量值达到底层数组的capacity-1之后，再前进一位就自定变成0,。示意图如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-668e70ff5c324f78.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="circulation.PNG"></p>
+<p>不管队列是空还是满，都会出现一个情况：front==rear.如果底层数据中elementData[front]==null,则表明此时队列为空，否则表明该队列已满。</p>
+<h3 id="队列的链式存储结构及实现"><a href="#队列的链式存储结构及实现" class="headerlink" title="队列的链式存储结构及实现"></a>队列的链式存储结构及实现</h3><p>使用链式结构保存线性表，也可以采用链式结构来存储队列的各元素，采用链式存储结构的队列也被称为链队列。</p>
+<p>对于链队列而言，由于程序需要从rear端添加元素，然后从front端移除元素，因此考虑对链队列增加front,rear两个引用变量，使他们分别执行链队列的头，尾两个节点。链队列示意图如下：<br><img src="http://upload-images.jianshu.io/upload_images/925576-ab5898a93da017e8.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="queue_llinked.PNG"><br>由于链队列采用链式结构类保存队列中所有元素，该队列允许添加无限多个数据元素，因此链队列无队列满的问题。</p>
+<h4 id="1-插入队列"><a href="#1-插入队列" class="headerlink" title="1.插入队列"></a>1.插入队列</h4><p>对于链队列而言，插入操作的实现非常简单，只要创建一个新节点，让原rear节点的next引用指向新的节点，再让rear引用指向该新节点即可。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-46e380c956f2ed9e.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="queue_linked_insert.PNG"></p>
+<h4 id="2-移除队列"><a href="#2-移除队列" class="headerlink" title="2.移除队列"></a>2.移除队列</h4><p>对于链队列而言，移除操作的实现也非常简单，只要让front引用指向原front所引用节点的下一个节点即可。当然，不要忘记释放原front节点的引用。示意图如下:<br><img src="http://upload-images.jianshu.io/upload_images/925576-1d1624ad979be640.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="queue_linked_delete.PNG"></p>
+<h3 id="Java集合中的队列"><a href="#Java集合中的队列" class="headerlink" title="Java集合中的队列"></a>Java集合中的队列</h3><p>从JDK1.5开始,java的集合框架中提供了一个queue接口，该接口代表了一个队列，实现该接口的类可以当成队列使用。Queue里包含了6个方法，用于代表队列包含的3个标志性的方法，如下所示：</p>
+<ul>
+<li>插入：在队列的rear端插入元素</li>
+<li>移除：在队列的front端删除元素</li>
+<li>访问：访问队列的front端元素</li>
+</ul>
+<p>Java为上面的每个方法方法提供了两个版本：具有特殊返回值的版本和抛出异常的版本，这样就产生了6个方法。</p>
+<table>
+<thead>
+<tr>
+<th>版本</th>
+<th>抛出异常的版本</th>
+<th>具有特殊返回值的版本</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>插入</td>
+<td>add(e)</td>
+<td>offer(e)</td>
+</tr>
+<tr>
+<td>移除</td>
+<td>remove()</td>
+<td>poll()</td>
+</tr>
+<tr>
+<td>访问</td>
+<td>element()</td>
+<td>peek()</td>
+</tr>
+</tbody>
+</table>
+<h1 id="双端队列"><a href="#双端队列" class="headerlink" title="双端队列"></a>双端队列</h1><p>双端队列代表一种特殊的队列，它可以在两端同时进行插入，删除操作，如下图所示：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-b0712d11453db45f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="double_queue.PNG"></p>
+<p>对于双端队列，由于它可以从两端分别进入插入，删除操作，如果程序将所有的插入，删除操作固定在一端进行，这个双端队列就变成前面介绍的栈，由此可见，Deque和Queue，Stack之间的关系如图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-c0e8301c4e548f8f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="double_queue_relation.PNG"></p>
+<p>双端队列（Deque）既可说是Queue的子接口，也可说Stack(JDK并未提供这个接口)的子接口。因此。Deque即可当成队列使用，也可当成栈使用。</p>
+<p>由此可见，Deque其实就是Queue和Stack混合而成的一种特殊的线性表，完全可以参考起前面的Queue,Stack的实现类实现Deque。</p>
+<p>JDK为Deque提供了ArrayDeque和LinkedList两个常见的实现类。其中，ArrayDeque代表顺序存储结构的双端队列，LinkedList则代表链式存储结构的双端队列。</p>
+<p>LinkedList代表一种双向，链式存储结构的循环线性表，这里有提到LinkedList代表线程安全的，链式结构的双端队列，由此可见，LinkedList实在是一个功能非常强大的集合类。事实上，LinkedList几乎是Java集合框架中方法最多的类。<br><img src="http://upload-images.jianshu.io/upload_images/925576-9539da99ea52511b.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="LinkedList_relation.PNG"></p>
+<p>虽然LinkedList工具类的功能非常强大，它既可当成线性表使用，也可当成栈使用，还可当成队列使用，但对大部分程序而言，使用ArrayList，ArrayDeque的性能比LinkedList更好。</p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a data-url="http://jack921.win/2017/09/01/疯狂java笔记之栈和队列/" data-id="cj70okxgb000vdkvl5v79zfzi" class="article-share-link">分享</a><div class="tags"><a href="/tags/Java/">Java</a></div><div class="post-nav"><a href="/2017/09/01/疯狂java笔记之线性表/" class="pre">疯狂java笔记之线性表</a><a href="/2017/09/01/疯狂java笔记之树和二叉树/" class="next">疯狂java笔记之树和二叉树</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论 「请确保 disqus.com 可以正常加载」</button></div><script>var disqus_shortname = 'jack921';
+var disqus_identifier = '2017/09/01/疯狂java笔记之栈和队列/';
+var disqus_title = '疯狂java笔记之栈和队列';
+var disqus_url = 'http://jack921.win/2017/09/01/疯狂java笔记之栈和队列/';
+$('.btn_click_load').click(function() {
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+  $('.btn_click_load').css('display','none');
+});
+$.ajax({
+  url: 'https://disqus.com/favicon.ico',
+  timeout: 3000,
+  type: 'GET',
+  success: (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    $('.btn_click_load').css('display','none');
+  })(),
+  error: function() {
+    $('.btn_click_load').css('display','block');
+  }
+});</script><script id="dsq-count-scr" src="//jack921.disqus.com/count.js" async></script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" class="search-form"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://jack921.win"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android自定义/">Android自定义</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android自定义控件/">Android自定义控件</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/React-Native/">React Native</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java基础/">java基础</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/react-native/" style="font-size: 15px;">react native</a> <a href="/tags/Android/" style="font-size: 15px;">Android</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/android蓝牙4-0/" style="font-size: 15px;">android蓝牙4.0</a> <a href="/tags/android自定义控件/" style="font-size: 15px;">android自定义控件</a> <a href="/tags/Android自定义控件/" style="font-size: 15px;">Android自定义控件</a> <a href="/tags/Gank-Android-客户端/" style="font-size: 15px;">Gank Android 客户端</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Android自定义/" style="font-size: 15px;">Android自定义</a> <a href="/tags/android/" style="font-size: 15px;">android</a> <a href="/tags/Android界面/" style="font-size: 15px;">Android界面</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/09/01/疯狂java笔记之树和二叉树/">疯狂java笔记之树和二叉树</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/09/01/疯狂java笔记之栈和队列/">疯狂java笔记之栈和队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/09/01/疯狂java笔记之线性表/">疯狂java笔记之线性表</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/09/01/疯狂Java笔记之面向对象的陷阱/">疯狂Java笔记之面向对象的陷阱</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/08/21/疯狂Java笔记之常见java集合的实现细节/">疯狂Java笔记之常见java集合的实现细节</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/08/21/疯狂Java笔记之表达式中的陷阱/">疯狂Java笔记之表达式中的陷阱</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/08/21/疯狂Java笔记之Java的内存与回收/">疯狂Java笔记之Java的内存与回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/08/16/Java基础之对象及其内存管理/">Java基础之对象及其内存管理</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/07/27/Flexboxlayout使用详解/">Flexboxlayout使用详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/06/24/高仿网易严选底部弹出菜单/">高仿网易严选底部弹出菜单</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-comment-o"> 最近评论</i></div><script type="text/javascript" src="//jack921.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=1&amp;avatar_size=32&amp;excerpt_length=20&amp;hide_mods=1"></script></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://developer.android.com/index.html" title="Android Developers" target="_blank">Android Developers</a><ul></ul><a href="http://www.androiddevtools.cn/donate.html" title="Android Dev Tools" target="_blank">Android Dev Tools</a><ul></ul><a href="http://blog.csdn.net/guolin_blog" title="郭霖 csdn" target="_blank">郭霖 csdn</a><ul></ul><a href="http://blog.csdn.net/lmj623565791" title="鸿洋 csdn" target="_blank">鸿洋 csdn</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2017 <a href="/." rel="nofollow">谢汉杰.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>

@@ -1,0 +1,157 @@
+<!DOCTYPE html><html lang="zh-CN"><head><meta http-equiv="content-type" content="text/html; charset=utf-8"><meta content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0" name="viewport"><meta content="yes" name="apple-mobile-web-app-capable"><meta content="black-translucent" name="apple-mobile-web-app-status-bar-style"><meta content="telephone=no" name="format-detection"><meta name="description"><title>疯狂java笔记之线性表 | 谢汉杰</title><link rel="stylesheet" type="text/css" href="/css/style.css?v=0.0.0"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/normalize/6.0.0/normalize.min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/pure-min.css"><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/pure/0.6.2/grids-responsive-min.css"><link rel="stylesheet" href="//cdn.bootcss.com/font-awesome/4.7.0/css/font-awesome.min.css"><script type="text/javascript" src="//cdn.bootcss.com/jquery/3.2.1/jquery.min.js"></script><link rel="Shortcut Icon" type="image/x-icon" href="/favicon.ico"><link rel="apple-touch-icon" href="/apple-touch-icon.png"><link rel="apple-touch-icon-precomposed" href="/apple-touch-icon.png"><link rel="alternate" type="application/atom+xml" href="/atom.xml"></head><body><div class="body_container"><div id="header"><div class="site-name"><h1 class="hidden">疯狂java笔记之线性表</h1><a id="logo" href="/.">谢汉杰</a><p class="description">保持愚蠢，保持饥饿</p></div><div id="nav-menu"><a href="/." class="current"><i class="fa fa-home"> 首页</i></a><a href="/archives/"><i class="fa fa-archive"> 归档</i></a><a href="/about/"><i class="fa fa-user"> 关于</i></a><a href="/atom.xml"><i class="fa fa-rss"> 订阅</i></a></div></div><div id="layout" class="pure-g"><div class="pure-u-1 pure-u-md-3-4"><div class="content_container"><div class="post"><h1 class="post-title">疯狂java笔记之线性表</h1><div class="post-meta">Sep 1, 2017<span> | </span><span class="category"><a href="/categories/Java/">Java</a></span><script src="https://dn-lbstatics.qbox.me/busuanzi/2.3/busuanzi.pure.mini.js" async></script><span id="busuanzi_container_page_pv"> | <span id="busuanzi_value_page_pv"></span><span> 阅读</span></span></div><a data-disqus-identifier="2017/09/01/疯狂java笔记之线性表/" href="/2017/09/01/疯狂java笔记之线性表/#disqus_thread" class="disqus-comment-count"></a><div class="post-content"><p>从数据的逻辑结构来分，数据元素之间存在的关联关系被称为数据的逻辑结构。归纳起来，应用程序中的数据大致哟如下四种基本的逻辑结构。</p>
+<ul>
+<li>集合：数据元素之间只有“同属于一个集合”的关系</li>
+<li>线性结构：数据元素之间存在一个对一个的关系</li>
+<li>树形结构：数据元素之间存在一个对多个的关系</li>
+<li>图状结构或网状结构：数据元素之间存在多个对多个关系<br>对于数据不同的逻辑结构，在底层通常有两种物理存储结构。</li>
+<li>顺序存储结构</li>
+<li>链式存储结构</li>
+</ul>
+<h1 id="线性表的定义及逻辑结构"><a href="#线性表的定义及逻辑结构" class="headerlink" title="线性表的定义及逻辑结构"></a>线性表的定义及逻辑结构</h1><p>线性表（LinearList）是由n(n&gt;=0)个数据元素(节点)a1,a2,a3,…,an组成的有限序列。</p>
+<p>线性表中每个元素必须具有相同的结构(即拥有相同的数据项).线性表是线性结构中最常用而又最简单的一种数据结构。</p>
+<p>线性表中每个数据元素其实可以包含若千个数据项，例如，使用ai来代表线性表中的第i个元素，其中ai元素可以包含若千个数据项。关干线性表还可以有如下定义。</p>
+<ul>
+<li>线性表中包含的数据元素个数n被称为表的长度，当线性表的长度为0是该表也被称为空表。</li>
+<li>当n&gt;0时，表可以表示为(a1,a2,a3,…,an)</li>
+</ul>
+<p>对于一个非空，有限的线性表而言，它总具有如下特征。</p>
+<ul>
+<li>总存在唯一的“第一个”数据元素。</li>
+<li>总存在唯一的“最后一个”数据元素。</li>
+<li>除第一个数据元素外，集合中的每一个数据元素都只有一个前驱的数据元素。</li>
+<li>除了最后一个数据元素外，集合中的每个数据元素都只有一个后继的数据元素。</li>
+</ul>
+<h3 id="线性表的基本操作"><a href="#线性表的基本操作" class="headerlink" title="线性表的基本操作"></a>线性表的基本操作</h3><p>如果需要实现一个线性表，程序首先需要确定该线性表的每个数据元素。接下来，应该为该线性表实现如下基本操作。</p>
+<ul>
+<li>初始化：通常是一个构造器，用于创建一个空的线性表</li>
+<li>返回线性表的长度：该方法用于返回线性表中的数据元素</li>
+<li>获取指定索引处的元素:根据索引返回线性表的数据元素</li>
+<li>按值查找数据元素的位置：如果线性表中存在一个或多个与查找值相等的数据元素，那么该方法返回一个搜索到的值相等的数据元素的索引，否则返回-1.</li>
+<li>直接插入数据元素：向线性表的头部插入一个数据元素，线性表长度+1；</li>
+<li>向指定位置插入数据元素:向线性表的指定索引处插入一个数据元素，线性表长度+1.</li>
+<li>直接删除数据元素：删除线性表头部的数据元素，线性表长度-1.</li>
+<li>删除线性表中指定位置的数据元素：删除线性表中指定索引处的数据元素，线性表长度-1.</li>
+<li>判断线性表是否为空：该方法判断线性表是否为空，如果线性表为空，则返回true,否则返回false</li>
+<li>清空线性表：将线性表清空<h1 id="顺序存储结构"><a href="#顺序存储结构" class="headerlink" title="顺序存储结构"></a>顺序存储结构</h1>线性表的顺序存储结构是指用一组地址连续的存储单元依次存放线性表的元素。当程序采用顺序存储结构来实现线性表时，线性表中相邻元素的两个元素ai和ai+1对应的存储地址loc(ai)和loc(ai+1)也是相邻的。</li>
+</ul>
+<p>换句话说，顺序结构线性表中数据元素的物理关系和逻辑关系是一致的，线性表中数据元素的存储地址可按如下公式计算。</p>
+<p>loc(ai)=loc(a0)+i*b(0&lt;i&lt;n) </p>
+<p>上面公式中b代表每个数据元素的存储单元。从上面公式可以看出，程序获取线性表中每个元素的存储起始地址的时间相同，读取表中数据元素的时间也相同。而且顺序表中每个元素都可随机存取，因此顺序存储的线性表时一种随机存取的存储结构。</p>
+<p>为了使用顺序结构实现线性表，程序通常会采用数组来保存线性表中的数据元素。</p>
+<p>线性表的插入运算是指表的第i(0&lt;=i&lt;n)个位置插入一个新的数据元素x,是长度为n的线性表：</p>
+<p>a0,…,ai-1,ai,…,an-1</p>
+<p>变成长度为n+1的线性表：</p>
+<p>a0,…,ai-1,x,ai,…,an-1<br>向顺序结构的线性表插入元素，如图所示：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-8bbd16422ea595bb.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="linear.PNG"></p>
+<p>这里有一个要考虑的问题。由于顺序结构线性表底层采用数组来存储数据元素，因此插入数据元素是必须保证不会超出底层属猪的容量。如果线性表中元素的个数超出了底层数据的长度，那么就必须为该线性表扩充底层数据的长度。</p>
+<p>线性表的删除运算是指将表的第i(0&lt;=i&lt;n)个位置的数据元素删除，使长度为n的线性表：</p>
+<p>a0,…,ai-1,ai,ai+1,…,an-1</p>
+<p>变成长度为n-1的线性表：</p>
+<p>a0,…,ai-1,ai+1,…,an-1</p>
+<p>从顺序结构的线性表中删除元素，如下图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-80ab6d562d19e61a.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="linear2.PNG"></p>
+<h1 id="链式存储结构"><a href="#链式存储结构" class="headerlink" title="链式存储结构"></a>链式存储结构</h1><p>链式存储结构的线性表（简称为链表）将采用一组地址任意的存储单元存放线性表中的数据元素。链式存储结构的线性表不会按线性的逻辑顺序来保存数据元素，他需要在每个数据元素里保存一个引用下一个数据元素的引用（或者叫指针）。</p>
+<p>由于不是必须按顺序存储，链表在插入，删除数据元素时比顺序线性表块的多，当时查找一个节点或者访问特点节点编号的节点则比顺序线性表慢得多。</p>
+<p>使用链表结构可以克服顺序线性表(基于数组)需要预先知道数据大小的缺点，链表结构可以充分利用计算机的内存空间，实现灵活的内存动态管理。但是链表结构失去了数组随机存取的优点，同时链表由于增加了节点的指针域，空间开销比较大。</p>
+<p>对于链表存储结构的线性表而言，它的每个节点都必须包含数据元素本身和一个或两个用来引用上一个/下一个节点的引用。也就是说，有如下公式：</p>
+<p>节点=数据元素+引用下一个节点的引用+引用上一个节点的引用</p>
+<p>如下图是双向链表节点示意图，其中每个节点中的prev代表前一个节点的引用，只有双向链表的节点才存在prev引用。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-4be39139792e678f.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="enty.PNG"></p>
+<p>链表是多个相互引用的节点的集合，这个链表总是从头节点开始，然后依次向后指向每个节点。</p>
+<p>空链表就是头节点为null的链表</p>
+<h3 id="单链表上的基本运算"><a href="#单链表上的基本运算" class="headerlink" title="单链表上的基本运算"></a>单链表上的基本运算</h3><p>单链表指定是每个节点保留一个引用，改引用指向当前节点的下一个节点，没有引用指向头节点，尾节点的next引用为null.单链表示意图如下：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-f1e478a37050ea6c.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="one_linked.PNG"></p>
+<p>对于单链表，系统建立单链表的过程就是不断添加节点的过程。动态添加单链表有以下两种方式。</p>
+<ul>
+<li>头插法建表：该方法从一个空表开始，不断地创建新节点，将数据元素存入节点的data域中，然后不断地以新节点为头节点，让新节点指向原有的头节点</li>
+<li>尾插法建表：该方法是将新节点插入到当前链表的表尾上，因此需要为链表定义一个引用变量来保存链表的最后一个节点。</li>
+</ul>
+<p>头插法建立链表虽然算法简单，但生成的链表中节点的次序和输入的顺序相反:若希望二者次序一致，则应该采用尾插法来建立链表。</p>
+<p>对于单链表而言，常用的操作有：</p>
+<ol>
+<li>查找</li>
+<li>插入</li>
+<li>删除</li>
+</ol>
+<h4 id="1-查找操作"><a href="#1-查找操作" class="headerlink" title="1.查找操作"></a>1.查找操作</h4><p>单链表的查找操作可以分为以下两种：</p>
+<ul>
+<li><p>按序号查找第index个节点:从header节点依次向下在单链表中查找第index个节点口算法为，设header为头，current为当前节点(初始时current从heade，开始)，0为头节点序号，i为计数器，则可使current依次下移寻找节点，并使i同时递增记录节点序号，直到返回指定节点。</p>
+</li>
+<li><p>在链表中查找指定的element元素:查找是否有等于给定值element的节点。若有，则返回首次找到的其值为element的节点的索引;否则，返回-l。查找过程从开始节点出发，顺着链表逐个将节点的值和给定值element做比较。</p>
+</li>
+</ul>
+<h4 id="2-插入操作"><a href="#2-插入操作" class="headerlink" title="2.插入操作"></a>2.插入操作</h4><p>插入操作时将值为element的新节点插入到链表的第index个节点的位置上。因此，首先找到索引的index-1的节点，然后生成一个数据域为element的新节点newNode，并令idnex-1处节点的next引用新节点，新节点的next引用原来index处的节点。</p>
+<p>向i索引处插入节点的示意图。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-96d3cffe698e51f1.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="insert_linked.PNG"></p>
+<h4 id="3-删除操作"><a href="#3-删除操作" class="headerlink" title="3.删除操作"></a>3.删除操作</h4><p>删除操作是将链表的第index个节点删去。因为在单链表中，第index个节点是有index-1处的节点引用的，因此删除index处节点将先获取index-1处节点，然后index-1处节点的next引用到原index+1处的节点，并释放index处节点即可。</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-91dcfa90c9a34469.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="delete_linked.PNG"></p>
+<h3 id="循环链表"><a href="#循环链表" class="headerlink" title="循环链表"></a>循环链表</h3><p>循环链表是一种首尾相接的链表。将单链表的尾节点next指针改为引用单链表header节点，这个单链表就成了循环链表。</p>
+<p>循环链表具有一个显著特征：链表的任一个节点出发均可找到表中的其他所有节点，因此，循环链表可以被视为“无头无尾”,如下图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-aff754dfb418c87a.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="recycler_linked.PNG"></p>
+<p>循环链表中的第一个节点之前就是最后一个节点，反之亦然。循环链表的无边界使得它实现了很多方法时会更容易，在这样的链表上设计算法会比普通链表更加容易。</p>
+<p>新加入的节点应该是在第一个节点之前（采用头插法插入），还是最后一个节点之后（采用尾插法插入），可以根据实际要求灵活处理，具体的实现区别不大。</p>
+<h1 id="双向链表"><a href="#双向链表" class="headerlink" title="双向链表"></a>双向链表</h1><p>如果为每个节点保留两个引用prev和next,让prev指向当前节点的上一个节点，让next指向当前节点的下一页节点，此时的链表既可以向后依次访问每个节点，也可以向前依次访问节点，这种形式的链表被称为双向链表。示意图如下：<br><img src="http://upload-images.jianshu.io/upload_images/925576-120a0ab2df4de6e9.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="double_linked.PNG"><br>双向链表是一种对称结构，它克服了单链表上指针单向性的缺点，其中每个节点既可以向前引用，也可以向后引用，这样可以更方便地插入、删除数据元素。</p>
+<p>与单链表类似的是，如果将链表的header节点与tail节点链在一起就构成了双向循环链表。</p>
+<h3 id="双向链表的查找"><a href="#双向链表的查找" class="headerlink" title="双向链表的查找"></a>双向链表的查找</h3><p>由于双向链表既可以从header节点开始依次向后搜索每个节点，也可以从tail节点开始依次向前搜索每个节点，因此当程序试图从双向链表中搜索指定索引处的节点时，既可以从该链表的header节点开始搜索，也可以从该链表的tail节点开始搜索。至于到底应该从header开<br>始搜索，还是应该从tail开始搜索，则取决于被搜索节点是更靠近header，还是更靠近tail.</p>
+<p>一般来说，可以通过被搜索index的值来判断它更靠近header还是更靠近tail.如果index&lt;size/2，则可判断该位置更靠近header，应从header开始搜索;反之，则可判断该位置更靠近tail，那就应从tail开始搜索口</p>
+<h3 id="双向链表的插入"><a href="#双向链表的插入" class="headerlink" title="双向链表的插入"></a>双向链表的插入</h3><p>双向链表的插入操作更复杂，向双向链表中插入一个新节点必须同时修改两个方向的指针（即引用）。如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/925576-68a3dfab7295f237.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="insert_double_linked.PNG"></p>
+<h3 id="双向链表的删除"><a href="#双向链表的删除" class="headerlink" title="双向链表的删除"></a>双向链表的删除</h3><p>在双向链表中，删除一个节点需要同时修改两个方向的指针，双向链表中删除节点的操作，如下图所示：<br><img src="http://upload-images.jianshu.io/upload_images/925576-707bee4a1f56b189.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="delete_double_linked.PNG"></p>
+<h1 id="线性表的分析"><a href="#线性表的分析" class="headerlink" title="线性表的分析"></a>线性表的分析</h1><p>线性表的顺序的顺序和链式两种实现各有优势：如下</p>
+<table>
+<thead>
+<tr>
+<th>分析比较</th>
+<th>顺序表</th>
+<th>链表</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>空间性能</td>
+<td>顺序表的存储空间是有静态分布的，因此需要一个长度固定的数组，因此总有部分数组元素被浪费</td>
+<td>链表的存储空间是动态分布的，因此空间不会被浪费。但由于链表需要额外的空间来为每个节点保存指针</td>
+</tr>
+<tr>
+<td>时间性能</td>
+<td>顺序表中元素的逻辑顺序与物理存储顺序保持一致，而且支持随机存取，因此顺序在查找，读取性能很好</td>
+<td>链表采用链式结构来保存表内元素，因此在插入，删除元素时性能较好</td>
+</tr>
+</tbody>
+</table>
+<h3 id="线性表的功能"><a href="#线性表的功能" class="headerlink" title="线性表的功能"></a>线性表的功能</h3><p>线性的本质上是一个充当容器的工具类，当程序有一组结构相同的数据元素需要保存时，就可以考虑使用线性表来保存它们。</p>
+<p>从某种程度来说，线性表是数组的加强，线性表比数据多了如下几个功能：</p>
+<ul>
+<li>线性表的长度可以动态改变，而java数组的长度是固定的<br>-线性表可以插入元素，而数组无法插入元素</li>
+<li>线性表可以删除元素，而数组无法删除元素，数组只能将指定元素赋为null,但各种元素依然存在</li>
+<li>线性表提供方法来搜索指定元素的位置，而数组一般不提供该方法</li>
+<li>线性表提供方法来清空所有元素的位置，而数组一般不提供该方法</li>
+</ul>
+<p>从上面线性表的实现能发珑线性表比数组功能强大的理由是，顺序结构的线性表可以说是包装过的数组，自然会提供更多额外的方法来简化操作。</p>
+<p>对于大部分,Java程序员来说，其实经常在使用线性表List. Java的List接口就代表了线性表，线性表的两种实现分别是ArrayList和LinkedList其中LinkedList还是一个双向链表。JDK提供的线性表有如下图：</p>
+<p><img src="http://upload-images.jianshu.io/upload_images/925576-5d9cb3db4508aa0c.PNG?imageMogr2/auto-orient/strip%7CimageView2/2/w/1240" alt="listtype.PNG"></p>
+</div><script type="text/javascript" src="/js/share.js?v=0.0.0" async></script><a data-url="http://jack921.win/2017/09/01/疯狂java笔记之线性表/" data-id="cj70okxh6001adkvl8tfb3igo" class="article-share-link">分享</a><div class="tags"><a href="/tags/Java/">Java</a></div><div class="post-nav"><a href="/2017/09/01/疯狂Java笔记之面向对象的陷阱/" class="pre">疯狂Java笔记之面向对象的陷阱</a><a href="/2017/09/01/疯狂java笔记之栈和队列/" class="next">疯狂java笔记之栈和队列</a></div><div id="disqus_thread"><div class="btn_click_load"><button class="disqus_click_btn">阅读评论 「请确保 disqus.com 可以正常加载」</button></div><script>var disqus_shortname = 'jack921';
+var disqus_identifier = '2017/09/01/疯狂java笔记之线性表/';
+var disqus_title = '疯狂java笔记之线性表';
+var disqus_url = 'http://jack921.win/2017/09/01/疯狂java笔记之线性表/';
+$('.btn_click_load').click(function() {
+  (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+  })();
+  $('.btn_click_load').css('display','none');
+});
+$.ajax({
+  url: 'https://disqus.com/favicon.ico',
+  timeout: 3000,
+  type: 'GET',
+  success: (function() {
+    var dsq = document.createElement('script'); dsq.type = 'text/javascript'; dsq.async = true;
+    dsq.src = '//' + disqus_shortname + '.disqus.com/embed.js';
+    (document.getElementsByTagName('head')[0] || document.getElementsByTagName('body')[0]).appendChild(dsq);
+    $('.btn_click_load').css('display','none');
+  })(),
+  error: function() {
+    $('.btn_click_load').css('display','block');
+  }
+});</script><script id="dsq-count-scr" src="//jack921.disqus.com/count.js" async></script></div></div></div></div><div class="pure-u-1-4 hidden_mid_and_down"><div id="sidebar"><div class="widget"><form action="//www.google.com/search" method="get" accept-charset="utf-8" target="_blank" class="search-form"><input type="text" name="q" maxlength="20" placeholder="Search"/><input type="hidden" name="sitesearch" value="http://jack921.win"/></form></div><div class="widget"><div class="widget-title"><i class="fa fa-folder-o"> 分类</i></div><ul class="category-list"><li class="category-list-item"><a class="category-list-link" href="/categories/Android/">Android</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android自定义/">Android自定义</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Android自定义控件/">Android自定义控件</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/Java/">Java</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/React-Native/">React Native</a></li><li class="category-list-item"><a class="category-list-link" href="/categories/java基础/">java基础</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-star-o"> 标签</i></div><div class="tagcloud"><a href="/tags/react-native/" style="font-size: 15px;">react native</a> <a href="/tags/Android/" style="font-size: 15px;">Android</a> <a href="/tags/java/" style="font-size: 15px;">java</a> <a href="/tags/android蓝牙4-0/" style="font-size: 15px;">android蓝牙4.0</a> <a href="/tags/android自定义控件/" style="font-size: 15px;">android自定义控件</a> <a href="/tags/Android自定义控件/" style="font-size: 15px;">Android自定义控件</a> <a href="/tags/Gank-Android-客户端/" style="font-size: 15px;">Gank Android 客户端</a> <a href="/tags/Java/" style="font-size: 15px;">Java</a> <a href="/tags/Android自定义/" style="font-size: 15px;">Android自定义</a> <a href="/tags/android/" style="font-size: 15px;">android</a> <a href="/tags/Android界面/" style="font-size: 15px;">Android界面</a></div></div><div class="widget"><div class="widget-title"><i class="fa fa-file-o"> 最近文章</i></div><ul class="post-list"><li class="post-list-item"><a class="post-list-link" href="/2017/09/01/疯狂java笔记之树和二叉树/">疯狂java笔记之树和二叉树</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/09/01/疯狂java笔记之栈和队列/">疯狂java笔记之栈和队列</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/09/01/疯狂java笔记之线性表/">疯狂java笔记之线性表</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/09/01/疯狂Java笔记之面向对象的陷阱/">疯狂Java笔记之面向对象的陷阱</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/08/21/疯狂Java笔记之常见java集合的实现细节/">疯狂Java笔记之常见java集合的实现细节</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/08/21/疯狂Java笔记之表达式中的陷阱/">疯狂Java笔记之表达式中的陷阱</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/08/21/疯狂Java笔记之Java的内存与回收/">疯狂Java笔记之Java的内存与回收</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/08/16/Java基础之对象及其内存管理/">Java基础之对象及其内存管理</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/07/27/Flexboxlayout使用详解/">Flexboxlayout使用详解</a></li><li class="post-list-item"><a class="post-list-link" href="/2017/06/24/高仿网易严选底部弹出菜单/">高仿网易严选底部弹出菜单</a></li></ul></div><div class="widget"><div class="widget-title"><i class="fa fa-comment-o"> 最近评论</i></div><script type="text/javascript" src="//jack921.disqus.com/recent_comments_widget.js?num_items=5&amp;hide_avatars=1&amp;avatar_size=32&amp;excerpt_length=20&amp;hide_mods=1"></script></div><div class="widget"><div class="widget-title"><i class="fa fa-external-link"> 友情链接</i></div><ul></ul><a href="https://developer.android.com/index.html" title="Android Developers" target="_blank">Android Developers</a><ul></ul><a href="http://www.androiddevtools.cn/donate.html" title="Android Dev Tools" target="_blank">Android Dev Tools</a><ul></ul><a href="http://blog.csdn.net/guolin_blog" title="郭霖 csdn" target="_blank">郭霖 csdn</a><ul></ul><a href="http://blog.csdn.net/lmj623565791" title="鸿洋 csdn" target="_blank">鸿洋 csdn</a></div></div></div><div class="pure-u-1 pure-u-md-3-4"><div id="footer">Copyright © 2017 <a href="/." rel="nofollow">谢汉杰.</a> Powered by<a rel="nofollow" target="_blank" href="https://hexo.io"> Hexo.</a><a rel="nofollow" target="_blank" href="https://github.com/tufu9441/maupassant-hexo"> Theme</a> by<a rel="nofollow" target="_blank" href="https://github.com/pagecho"> Cho.</a></div></div></div><a id="rocket" href="#top" class="show"></a><script type="text/javascript" src="/js/totop.js?v=0.0.0" async></script><script type="text/javascript" src="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.js" async></script><script type="text/javascript" src="/js/fancybox.js?v=0.0.0" async></script><link rel="stylesheet" type="text/css" href="//cdn.bootcss.com/fancybox/3.0.47/jquery.fancybox.min.css"><script type="text/javascript" src="/js/codeblock-resizer.js?v=0.0.0"></script><script type="text/javascript" src="/js/smartresize.js?v=0.0.0"></script></div></body></html>
